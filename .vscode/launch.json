@@ -4,7 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-    
         {
             "name": "Python Debugger: Current File",
             "type": "debugpy",
@@ -12,7 +11,19 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "args": ["-i", "C:\\work\\viixoo\\cmim\\odoo_community\\odoo\\addons\\base\\models\\res_partner.py", "-o", "./converted_models"],
-
+        },
+        {
+            "name": "Python: Pytest",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                // Add any pytest arguments here, e.g.,
+                "."
+                // "-k", "test_get_postgresql_tables_success" // to run a specific test
+            ],
+            "justMyCode": true, // Set to false to debug into external libraries
+            "cwd": "${workspaceFolder}" // Set the working directory
         }
     ]
 }

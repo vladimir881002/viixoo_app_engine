@@ -1,18 +1,27 @@
+import os
 import importlib
 import pkgutil
 from fastapi import FastAPI, APIRouter, Request
-from ..controllers import BaseController
+from viixoo_core.controllers import BaseController
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.openapi.docs import get_swagger_ui_html
-import viixoo_apps  # Importar el paquete base de módulos
 
 API_PREFIX = "/v1"
+
+APPS_PATH_DEFINED: str = os.environ.get("APPS_PATH", "")
+APPS_PATH: str = os.path.join(os.path.dirname(__file__), "../../viixoo_apps")
+
+if APPS_PATH_DEFINED:
+    APPS_PATH = os.path.abspath(APPS_PATH_DEFINED)
+
+print(f"📂 APPS_PATH: {APPS_PATH}")
 
 app = FastAPI(title="An app powered by Viixoo App Engine. 🚀")
 
 # Cargar dinámicamente todos los módulos dentro de viixoo_apps
 def load_modules():
-    for _, module_name, _ in pkgutil.iter_modules(viixoo_apps.__path__):
+    print(f"📂 Loading modules in path: {APPS_PATH}")
+    for _, module_name, _ in pkgutil.iter_modules([APPS_PATH]):
         module_full_name = f"viixoo_apps.{module_name}.routes"
         try:
             module = importlib.import_module(module_full_name)  # Importar el módulo routes

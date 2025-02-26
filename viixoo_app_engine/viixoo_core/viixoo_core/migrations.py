@@ -5,8 +5,8 @@ from psycopg2.sql import Identifier, SQL
 from viixoo_core.config import BaseConfig
 from viixoo_core.models.base import BaseDBModel
 from typing import List, Any
+from types import ModuleType
 import importlib
-from importlib.machinery import ModuleSpec
 import pkgutil
 from pydantic_core._pydantic_core import PydanticUndefinedType
 
@@ -17,7 +17,7 @@ APPS_PATH_DEFINED: str = os.environ.get("APPS_PATH", "")
 APPS_PATH: str = os.path.join(os.path.dirname(__file__), "../../viixoo_apps")
 
 if APPS_PATH_DEFINED:
-    APPS_PATH = os.path.abspath(APPS_PATH_DEFINED)
+    APPS_PATH = APPS_PATH_DEFINED
 
 print(f"📂 APPS_PATH: {APPS_PATH}")
 
@@ -41,18 +41,7 @@ class Migration:
         return modules
     
     @classmethod
-    def import_module_from_path(cls, module_name: str, path: str) -> object:
-        """Imports a module from the given path. Function to dynamically import a module given its full path"""
-        
-        # Create a module spec from the given path
-        spec: ModuleSpec = importlib.util.spec_from_file_location(module_name, path)
-
-        # Load the module from the created spec
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        return module
-    
-    def import_module_from_path(module_path: str) -> dict[str, Any]:
+    def import_module_from_path(cls, module_path: str) -> dict[str, Any]:
         """Imports a module from the given path. Function to dynamically import a module given its full module_path
 
         Args:
@@ -150,7 +139,7 @@ class Migration:
         return db_connection
         
     @classmethod
-    def run_postgresql_migrations(cls, config: dict, module: str):
+    def run_postgresql_migrations(cls, config: dict, module: ModuleType):
         """Runs migrations for PostgreSQL with change logs."""
         # Connect to the database
         print("🚀 Starting migrations...")
@@ -309,7 +298,7 @@ class Migration:
         return {row[0]: row[1] for row in cursor.fetchall()}
 
     @classmethod
-    def get_postgresql_tables(cls, module: str) -> dict:
+    def get_postgresql_tables(cls, module: ModuleType) -> dict:
         """Gets the Pydantic models and generates table schemas with foreign keys and unique constraints."""
         tables = {}
 
