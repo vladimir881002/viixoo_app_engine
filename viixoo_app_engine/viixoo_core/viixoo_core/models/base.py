@@ -10,7 +10,7 @@ class BaseDBModel(BaseModel, ABC):
     __description__ = "model_description"  # Debe ser definido en cada modelo
     __order__ = 'id'  # Debe ser definido en cada modelo
 
-    id: int = Field(primary_key=True)
+    id: int = Field(json_schema_extra=dict(primary_key=True))
 
     @abstractmethod
     def get_connection(self):
