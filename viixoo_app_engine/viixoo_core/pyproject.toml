@@ -30,7 +30,7 @@ dependencies = [
 "Bug Tracker" = "https://github.com/vladimir881002/viixoo_app_engine/issues"  # (Optional)
 
 [project.optional-dependencies]  # (Optional) Define extra dependencies
-dev = ["pytest", "pre-commit", "black", "isort"]  # development dependencies
+dev = ["pytest", "pytest-cov", "pre-commit", "black", "isort"]  # development dependencies
 
 [project.entry-points."console_scripts"]  # Note the quotes around "console_scripts"
 viixoo_core_run = "viixoo_core.app:app"  # Your entry point
