@@ -1,0 +1,16 @@
+codecov:
+    max_report_age: off
+coverage:
+  status:
+    project:
+      default:   # default is the status check's name, not default settings
+        target: 85% 
+        threshold: 1
+        base: auto 
+        flags: 
+          - unit
+        paths: 
+          - "viixoo_app_engine/viixoo_core/"
+        if_ci_failed: error #success, failure, error, ignore
+        informational: false
+        only_pulls: false

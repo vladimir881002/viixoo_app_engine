@@ -1,0 +1,20 @@
+# Codeowners for the Viixoo App Engine project
+
+# Core files and migrations
+viixoo_core/viixoo_core/ @vladimir881002
+
+# Fronted desing
+viixoo_apps_frontend/ @vladimir881002 @yaricelgv90
+
+
+# Migration tests
+viixoo_core/tests/viixoo_core/migration_tests/ @vladimir881002
+
+# Example app
+viixoo_apps/example/ @vladimir881002
+
+# GitHub Actions workflows
+.github/workflows/ @vladimir881002
+
+# Default owner for all other files
+* @vladimir881002
