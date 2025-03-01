@@ -65,7 +65,8 @@ class BaseDBModel(BaseModel, ABC):
             Search the given rows from the table. Filter by selectors. If not selectors are given, return all rows.
         """
         raise NotImplementedError("Subclasses must implement search method.")
-    
+
+    @abstractmethod
     def search_load(self, selectors: List[Dict]):
         """
             Search the given rows from the table. Filter by selectors. If not selectors are given, return all rows.
