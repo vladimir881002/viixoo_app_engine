@@ -1,5 +1,5 @@
-from viixoo_apps.example.models.example_model import ExampleModel
-from viixoo_app_engine.viixoo_core.viixoo_core.services import BaseService
+from ..models.example_model import ExampleModel
+from viixoo_core.services.base_service import BaseService
 
 
 class ExampleService(BaseService):
@@ -9,8 +9,8 @@ class ExampleService(BaseService):
         super().__init__("example")
         
         self.examples = [
-            ExampleModel(id=1, name="Ejemplo 1"),
-            ExampleModel(id=2, name="Ejemplo 2"),
+            ExampleModel(id=1, name="Ejemplo 1", extra_field=1),
+            ExampleModel(id=2, name="Ejemplo 2", extra_field=2),
         ]
 
     def get_all_examples(self):

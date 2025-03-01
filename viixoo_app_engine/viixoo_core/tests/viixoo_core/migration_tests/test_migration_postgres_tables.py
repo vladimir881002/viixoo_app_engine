@@ -37,9 +37,10 @@ class TestMigrationGetPostgresqlTables:
         """Test get_postgresql_tables function when models are correctly found."""
         # Arrange
         mock_module = MagicMock(spec=ModuleType)
+        mock_module.models = MagicMock(spec=ModuleType)
         
-        mock_module.Model1 = self.Model1
-        mock_module.Model2 = self.Model2
+        mock_module.models.Model1 = self.Model1
+        mock_module.models.Model2 = self.Model2
         mock_module.__name__ = "test_module"
 
         mock_pydantic_to_sql.side_effect = lambda x: {"schema": f"schema_{x.__tablename__}"}

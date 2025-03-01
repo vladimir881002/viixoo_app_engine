@@ -33,7 +33,7 @@ dependencies = [
 dev = ["pytest", "pytest-cov", "pre-commit", "black", "isort"]  # development dependencies
 
 [project.entry-points."console_scripts"]  # Note the quotes around "console_scripts"
-viixoo_core_run = "viixoo_core.app:app"  # Your entry point
+viixoo_run = "viixoo_core.app:run_app"  # Your entry point
 viixoo_migrate = "viixoo_core.migrations:Migration.run"
 viixoo_convert = "viixoo_core.odoo_converter.converter:main"
 # Add other entry points here if needed

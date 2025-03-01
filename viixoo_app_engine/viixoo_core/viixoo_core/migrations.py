@@ -1,27 +1,13 @@
-import os
-import sys
 import psycopg2
 from psycopg2.sql import Identifier, SQL
 from viixoo_core.config import BaseConfig
 from viixoo_core.models.base import BaseDBModel
-from viixoo_core.import_utils import ImportUtils
-from typing import List, Any
+from viixoo_core.import_utils import ImportUtils, APPS_PATH
 from types import ModuleType
-import importlib
-import pkgutil
 from pydantic_core._pydantic_core import PydanticUndefinedType
 
 db_connection = False
 config: dict = {}
-
-APPS_PATH_DEFINED: str = os.environ.get("APPS_PATH", "")
-APPS_PATH: str = os.path.join(os.path.dirname(__file__), "../../viixoo_apps")
-
-if APPS_PATH_DEFINED:
-    APPS_PATH = APPS_PATH_DEFINED
-
-print(f"📂 APPS_PATH: {APPS_PATH}")
-
 
 class Migration:
     """Base class for database migration."""
@@ -32,14 +18,11 @@ class Migration:
     def run(cls):
         """Method to run the migrations"""
         global config
-
-        modules = ImportUtils.get_modules()
+        modules = ImportUtils.import_module_from_path(APPS_PATH)
         for module in modules:
             config = BaseConfig.get_config(APPS_PATH, module)
-            modules = ImportUtils.import_module_from_path(os.path.join(APPS_PATH, module))
             if config["db_type"] == "postgresql":
-                for module in modules:
-                    cls.run_postgresql_migrations(config=config, module=modules[module])
+                cls.run_postgresql_migrations(config=config, module=modules[module])
             else:
                 raise ValueError(f"Unsupported database engine: {config['db_type']}")
             print(f"🚀 Migrations completed for module {module}")        
@@ -253,11 +236,18 @@ class Migration:
         try:
             # List all attributes and classes in the module
             for attr_name in dir(module):
+                if attr_name.startswith("__"):
+                    continue
                 attribute = getattr(module, attr_name)
                 
-                if isinstance(attribute, type) and issubclass(attribute, BaseDBModel) and attribute is not BaseDBModel:
-                    table_name = attribute.__tablename__
-                    tables[table_name] = cls.pydantic_to_sql(attribute)
+                for sub_attr in dir(attribute):
+                    if sub_attr.startswith("__"):
+                        continue
+
+                    sub_attr = getattr(attribute, sub_attr)
+                    if isinstance(sub_attr, type) and issubclass(sub_attr, BaseDBModel) and sub_attr is not BaseDBModel:
+                        table_name = sub_attr.__tablename__
+                        tables[table_name] = cls.pydantic_to_sql(sub_attr)
         except ModuleNotFoundError:
             print(f"🚨 Module {module}.models not found")
             raise  # Ignore modules without models.py

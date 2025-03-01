@@ -1,43 +1,38 @@
-import os
-import importlib
-import pkgutil
 from fastapi import FastAPI, APIRouter, Request
-from viixoo_core.controllers import BaseController
+from viixoo_core.routes.base_controller import BaseController
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.openapi.docs import get_swagger_ui_html
+from viixoo_core.import_utils import APPS_PATH, ImportUtils
 
 API_PREFIX = "/v1"
 
-APPS_PATH_DEFINED: str = os.environ.get("APPS_PATH", "")
-APPS_PATH: str = os.path.join(os.path.dirname(__file__), "../../viixoo_apps")
-
-if APPS_PATH_DEFINED:
-    APPS_PATH = os.path.abspath(APPS_PATH_DEFINED)
-
-print(f"📂 APPS_PATH: {APPS_PATH}")
-
 app = FastAPI(title="An app powered by Viixoo App Engine. 🚀")
+
+router = APIRouter()
+controller = BaseController(router)
 
 # Cargar dinámicamente todos los módulos dentro de viixoo_apps
 def load_modules():
     print(f"📂 Loading modules in path: {APPS_PATH}")
-    for _, module_name, _ in pkgutil.iter_modules([APPS_PATH]):
-        module_full_name = f"viixoo_apps.{module_name}.routes"
-        try:
-            module = importlib.import_module(module_full_name)  # Importar el módulo routes
-            if hasattr(module, "register_routes"):
-                router = APIRouter()
-                controller = BaseController(router)
-                module.register_routes(controller)  # Registrar rutas
-                app.include_router(router)
-                print(f"✅ Módulo cargado: {module_full_name}")
-            else:
-                print(f"⚠️ {module_full_name} no tiene register_routes, ignorando...")
-        except ModuleNotFoundError:
-            print(f"⚠️ {module_full_name} no encontrado, ignorando...")
+    try:
+        modules = ImportUtils.import_module_from_path(APPS_PATH)
+        for module in modules:
+            if hasattr(modules[module], "routes"):
+                _routes = modules[module].routes
+                if hasattr(_routes.routes, "register_routes"):                    
+                    _routes.routes.register_routes(controller)  # Registrar rutas                    
+                    print(f"✅ Module loaded: {module}")
+                else:
+                    print(f"⚠️ {module} don't have routes, ignoring...")
+    except Exception as e:
+        print(f"❌ Error loading modules: {e}")
+        return
 
 # Llamar a la función para cargar los módulos dinámicamente
 load_modules()
+
+# dynamic register routers
+app.include_router(router)
 
 @app.get(f"{API_PREFIX}/healthcheck")
 async def healthcheck():
@@ -67,6 +62,9 @@ async def swagger_ui_html(request: Request) -> HTMLResponse:
         swagger_ui_parameters=app.swagger_ui_parameters,
     )
 
-if __name__ == "__main__":
+def run_app():
     import uvicorn
     uvicorn.run("viixoo_core.app:app", host="0.0.0.0", port=8000)
+
+if __name__ == "__main__":
+    run_app()
