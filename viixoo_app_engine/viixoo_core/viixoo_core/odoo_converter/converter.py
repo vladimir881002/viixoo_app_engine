@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Dict, Optional, List
 import sys
 
-from .converter_templates import CODE_TPL
+from viixoo_core.odoo_converter.converter_templates import CODE_TPL
 
 
 """
@@ -57,7 +57,7 @@ class OdooModelParser:
         is_odoo_model = False
         for base in node.bases:
             if isinstance(base, ast.Attribute):
-                if base.attr == 'Model':
+                if base.attr in ('Model', 'AbstractModel', 'TransientModel'):
                     is_odoo_model = True
                     break
         
@@ -236,7 +236,7 @@ class PydanticModelGenerator:
             ))
 
         # Generate imports based on used types
-        imports = self._generate_imports()
+        imports = self._generate_imports(models=models)
         
         # Write the file
         with open(output_path, 'w') as f:
@@ -282,7 +282,7 @@ class PydanticModelGenerator:
                 return True
         return False
 
-    def _generate_imports(self) -> List[str]:
+    def _generate_imports(self, models) -> List[str]:
         """Generate import statements based on used types."""
         imports = set()
         
@@ -302,7 +302,7 @@ class PydanticModelGenerator:
         for factory in self.used_factories:
             if '.' in factory:
                 module, func = factory.split('.')
-                if module == 'datetime':
+                if module == 'datetime' or f"{module}".replace('Model', '') in models:
                     # datetime already imported if needed
                     continue
                 imports.add(f'from {module} import {func}')
@@ -363,16 +363,16 @@ class PydanticModelGenerator:
         line_brake = False
         computed_fields = set()
 
-        if model_info['_description']:
+        if model_info.get('_description'):
             lines.append(f'    """{model_info["_description"]}"""')
             lines.append(f'    __description__ = "{model_info["_description"]}"')
             line_brake = True
         
-        if model_info['_name']:
-            lines.append(f'    __tablename__ = "{model_info["_name"]}"')
+        if model_info.get('_name'):
+            lines.append(f'    __tablename__ = "{model_info["_name"].replace(".", "_")}"')
             line_brake = True
         
-        if model_info['_order']:
+        if model_info.get('_order'):
             lines.append(f'    __order__ = "{model_info["_order"]}"')
             line_brake = True
 
@@ -455,9 +455,9 @@ class PydanticModelGenerator:
                     self.used_types.add(python_type)
 
             # Handle compute fields
-            if 'compute_method' in field_args:
-                method_name = field_args['compute_method']
-                is_stored = field_args.get('compute_store', False)
+            if 'compute' in field_args:
+                method_name = field_args['compute']
+                is_stored = field_args.get('store', False)
                 
                 if is_stored:
                     computed_fields.add(field_name)

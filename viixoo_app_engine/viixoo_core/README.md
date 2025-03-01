@@ -16,9 +16,9 @@ python app.py # This might be outdated, see below for using uvicorn
 
 uvicorn viixoo_core.app:app --reload
 
-or execute directly: viixoo_core_run
+or execute directly: viixoo_run
 
-if the package is install just do a viixoo_core_run
+if the package is install just do a viixoo_run
 
 📌 Explanation of the Structure:
 
@@ -79,14 +79,6 @@ pydantic: Data validation and data model management.
 psycopg[binary]: Driver for connecting to PostgreSQL.
 Jinja2: Used in QWeb, as QWeb in Odoo is based on Jinja.
 
-📌 Explanation of setup.py:
-
-find_packages(): Automatically detects packages within the project.
-install_requires: List of required dependencies (same as in requirements.txt).
-entry_points: Allows running the application from the command line (viixoo_app_engine).
-include_package_data=True: Includes additional files like templates and static assets.
-classifiers: Metadata about the project, useful for PyPI.
-
 🚀 Testing with Multiple Modules
 If we have these modules:
 viixoo_apps/
@@ -136,6 +128,3 @@ Get all examples:
 Get an example by ID:
     GET http://127.0.0.1:8000/example/1
     {"id": 1, "name": "Example 1"}
-
-
-
