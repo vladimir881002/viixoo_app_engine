@@ -1,5 +1,5 @@
-from viixoo_apps.example.services import ExampleService
-from viixoo_core.controllers import BaseController
+from viixoo_core.routes.base_controller import BaseController
+from ..services.example_service import ExampleService
 
 service = ExampleService()
 
@@ -16,3 +16,5 @@ def register_routes(controller: BaseController):
     controller.add_route("/example", get_examples, methods=["GET"])
     controller.add_route("/example/{id}", get_example_by_id, methods=["GET"])
     controller.add_route("/example", service.create_examples, methods=["POST"])
+
+register_routes = register_routes

@@ -2,10 +2,11 @@ import psycopg2
 import importlib
 from psycopg2.extras import RealDictCursor
 from psycopg2.sql import Identifier, SQL, Placeholder
-from .base import BaseDBModel
 from typing import Dict, Any, List
-from ..config import BaseConfig
-from .domain import DomainTranslator
+from viixoo_core.models.base import BaseDBModel
+from viixoo_core.models.domain import DomainTranslator
+from viixoo_core.config import BaseConfig
+
 
 db_connection = False
 

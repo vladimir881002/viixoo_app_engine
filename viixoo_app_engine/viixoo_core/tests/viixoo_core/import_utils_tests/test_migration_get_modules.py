@@ -1,5 +1,6 @@
 from unittest.mock import patch
-from viixoo_core.migrations import Migration, APPS_PATH
+from viixoo_core.migrations import Migration
+from viixoo_core.import_utils import ImportUtils, APPS_PATH
 from viixoo_core.models.base import BaseDBModel
 import importlib
 import sys
@@ -12,7 +13,7 @@ class MockBaseDBModel(BaseDBModel):
 
 class TestMigrationGetModules:
 
-    @patch('viixoo_core.migrations.pkgutil.iter_modules')
+    @patch('viixoo_core.import_utils.pkgutil.iter_modules')
     def test_get_modules(self, mock_iter_modules, capsys):
         """Test get_modules function when modules are found."""
         # Arrange
@@ -23,7 +24,7 @@ class TestMigrationGetModules:
         ]
 
         # Act
-        modules = Migration.get_modules()
+        modules = ImportUtils.get_modules()
 
         # Assert
         assert modules == ['module1', 'module2', 'module3']
@@ -34,9 +35,9 @@ class TestMigrationGetModules:
         assert "📦 Module found: module2" in captured.out
         assert "📦 Module found: module3" in captured.out
 
-    @patch('viixoo_core.migrations.pkgutil.iter_modules')
-    @patch('viixoo_core.migrations.os.path.join')
-    @patch('viixoo_core.migrations.os.path.dirname')
+    @patch('viixoo_core.import_utils.pkgutil.iter_modules')
+    @patch('viixoo_core.import_utils.os.path.join')
+    @patch('viixoo_core.import_utils.os.path.dirname')
     def test_get_modules_custom_app_path(self, mock_dirname, mock_join, mock_iter_modules, capsys, monkeypatch):
         """Test get_modules with a custom APPS_PATH environment variable."""
         monkeypatch.setenv("APPS_PATH", "/custom/app/path")
@@ -48,9 +49,9 @@ class TestMigrationGetModules:
         mock_join.return_value = "/custom/app/path"
 
         # Reload migrations to get new config
-        importlib.reload(sys.modules['viixoo_core.migrations'])
+        importlib.reload(sys.modules['viixoo_core.import_utils'])
 
-        modules = Migration.get_modules()
+        modules = ImportUtils.get_modules()
 
         # Assert
         assert modules == ['module1']
@@ -60,9 +61,9 @@ class TestMigrationGetModules:
         assert "📂 Searching in path: /custom/app/path" in captured.out
         #Reload migrations to get default config
         monkeypatch.delenv("APPS_PATH")
-        importlib.reload(sys.modules['viixoo_core.migrations'])
+        importlib.reload(sys.modules['viixoo_core.import_utils'])
     
-    @patch('viixoo_core.migrations.pkgutil.iter_modules')
+    @patch('viixoo_core.import_utils.pkgutil.iter_modules')
     def test_get_modules_no_modules(self, mock_iter_modules, capsys, monkeypatch):
         """Test get_modules function when no modules are found."""
         monkeypatch.setenv("APPS_PATH", "/custom/app/path")
@@ -70,7 +71,7 @@ class TestMigrationGetModules:
         mock_iter_modules.return_value = []
 
         # Act
-        modules = Migration.get_modules()
+        modules = ImportUtils.get_modules()
 
         # Assert
         assert modules == []
@@ -81,4 +82,4 @@ class TestMigrationGetModules:
 
         #Reload migrations to get default config
         monkeypatch.delenv("APPS_PATH")
-        importlib.reload(sys.modules['viixoo_core.migrations'])
+        importlib.reload(sys.modules['viixoo_core.import_utils'])
