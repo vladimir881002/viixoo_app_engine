@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any, List
 from pydantic import BaseModel, Field
+from typing import Optional, Annotated
 
 
 class BaseDBModel(BaseModel, ABC):
@@ -10,7 +11,7 @@ class BaseDBModel(BaseModel, ABC):
     __description__ = "model_description"  # Debe ser definido en cada modelo
     __order__ = 'id'  # Debe ser definido en cada modelo
 
-    id: int = Field(json_schema_extra=dict(primary_key=True))
+    id: Optional[Annotated[int, Field(json_schema_extra=dict(primary_key=True))]] = None
 
     @abstractmethod
     def get_connection(self):
