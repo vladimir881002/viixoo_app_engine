@@ -1,15 +1,16 @@
 from unittest.mock import MagicMock, patch
 from viixoo_core.migrations import Migration
+from viixoo_core.import_utils import ImportUtils
 import sys
 
 
 class TestMigrationImportModuleFromPath:
 
-    @patch('viixoo_core.migrations.importlib.util.spec_from_file_location')
-    @patch('viixoo_core.migrations.importlib.util.module_from_spec')
-    @patch('viixoo_core.migrations.os.path.exists')
-    @patch('viixoo_core.migrations.os.path.isdir')
-    @patch('viixoo_core.migrations.os.listdir')
+    @patch('viixoo_core.import_utils.importlib.util.spec_from_file_location')
+    @patch('viixoo_core.import_utils.importlib.util.module_from_spec')
+    @patch('viixoo_core.import_utils.os.path.exists')
+    @patch('viixoo_core.import_utils.os.path.isdir')
+    @patch('viixoo_core.import_utils.os.listdir')
     def test_import_module_from_path_success(self, mock_listdir, mock_isdir, mock_exists, mock_module_from_spec, mock_spec_from_file_location):
         """Test import_module_from_path successfully imports modules."""
         # Arrange
@@ -23,7 +24,7 @@ class TestMigrationImportModuleFromPath:
         mock_module_from_spec.return_value = mock_module
 
         # Act
-        modules = Migration.import_module_from_path('/test/path/')
+        modules = ImportUtils.import_module_from_path('/test/path/')
 
         # Assert
         assert len(modules) == 2
@@ -38,14 +39,14 @@ class TestMigrationImportModuleFromPath:
         assert "valid_package1" in sys.modules
         assert "valid_package2" in sys.modules
 
-    @patch('viixoo_core.migrations.os.listdir')
+    @patch('viixoo_core.import_utils.os.listdir')
     def test_import_module_from_path_file_not_found(self, mock_listdir, capsys):
         """Test import_module_from_path when the directory is not found."""
         # Arrange
         mock_listdir.side_effect = FileNotFoundError
 
         # Act
-        modules = Migration.import_module_from_path('/non/existent/path/')
+        modules = ImportUtils.import_module_from_path('/non/existent/path/')
 
         # Assert
         assert modules == {}
@@ -53,14 +54,14 @@ class TestMigrationImportModuleFromPath:
         assert "🚨 Module directory '/non/existent/path/' not found." in captured.out
         mock_listdir.assert_called_once_with('/non/existent/path/')
 
-    @patch('viixoo_core.migrations.os.listdir')
+    @patch('viixoo_core.import_utils.os.listdir')
     def test_import_module_from_path_general_error(self, mock_listdir, capsys):
         """Test import_module_from_path when a general error occurs."""
         # Arrange
         mock_listdir.side_effect = Exception("Some error")
 
         # Act
-        modules = Migration.import_module_from_path('/test/path/')
+        modules = ImportUtils.import_module_from_path('/test/path/')
 
         # Assert
         assert modules == {}
@@ -68,10 +69,10 @@ class TestMigrationImportModuleFromPath:
         assert "❌ Error loading plugins: Some error" in captured.out
         mock_listdir.assert_called_once_with('/test/path/')
     
-    @patch('viixoo_core.migrations.importlib.util.spec_from_file_location')
-    @patch('viixoo_core.migrations.os.path.exists')
-    @patch('viixoo_core.migrations.os.path.isdir')
-    @patch('viixoo_core.migrations.os.listdir')
+    @patch('viixoo_core.import_utils.importlib.util.spec_from_file_location')
+    @patch('viixoo_core.import_utils.os.path.exists')
+    @patch('viixoo_core.import_utils.os.path.isdir')
+    @patch('viixoo_core.import_utils.os.listdir')
     def test_import_module_from_path_no_spec(self, mock_listdir, mock_isdir, mock_exists, mock_spec_from_file_location):
         """Test import_module_from_path when spec_from_file_location returns None."""
         # Arrange
@@ -81,17 +82,17 @@ class TestMigrationImportModuleFromPath:
         mock_spec_from_file_location.return_value = None
     
         # Act
-        modules = Migration.import_module_from_path('/test/path/')
+        modules = ImportUtils.import_module_from_path('/test/path/')
     
         # Assert
         assert len(modules) == 0
         mock_spec_from_file_location.assert_called_once()
     
-    @patch('viixoo_core.migrations.importlib.util.spec_from_file_location')
-    @patch('viixoo_core.migrations.importlib.util.module_from_spec')
-    @patch('viixoo_core.migrations.os.path.exists')
-    @patch('viixoo_core.migrations.os.path.isdir')
-    @patch('viixoo_core.migrations.os.listdir')
+    @patch('viixoo_core.import_utils.importlib.util.spec_from_file_location')
+    @patch('viixoo_core.import_utils.importlib.util.module_from_spec')
+    @patch('viixoo_core.import_utils.os.path.exists')
+    @patch('viixoo_core.import_utils.os.path.isdir')
+    @patch('viixoo_core.import_utils.os.listdir')
     def test_import_module_from_path_no_module(self, mock_listdir, mock_isdir, mock_exists, mock_module_from_spec, mock_spec_from_file_location):
         """Test import_module_from_path when module_from_spec returns None."""
         # Arrange
@@ -103,7 +104,7 @@ class TestMigrationImportModuleFromPath:
         mock_module_from_spec.return_value = None
     
         # Act
-        modules = Migration.import_module_from_path('/test/path/')
+        modules = ImportUtils.import_module_from_path('/test/path/')
     
         # Assert
         assert len(modules) == 0

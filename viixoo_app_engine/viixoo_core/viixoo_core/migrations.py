@@ -4,6 +4,7 @@ import psycopg2
 from psycopg2.sql import Identifier, SQL
 from viixoo_core.config import BaseConfig
 from viixoo_core.models.base import BaseDBModel
+from viixoo_core.import_utils import ImportUtils
 from typing import List, Any
 from types import ModuleType
 import importlib
@@ -26,69 +27,16 @@ class Migration:
     """Base class for database migration."""
 
     ### Base methods ###
-    ### Finds all the modules in the APPS_PATH and runs the migrations for each one ###
-
-    
-    @classmethod
-    def get_modules(cls) -> List[str]:
-        """Gets the application modules."""
-        print("🔍 Searching for application modules...")
-        modules = []
-        print(f"📂 Searching in path: {APPS_PATH}")
-        for _, module_name, _ in pkgutil.iter_modules([APPS_PATH]):
-            modules.append(module_name)
-            print(f"📦 Module found: {module_name}")
-        return modules
-    
-    @classmethod
-    def import_module_from_path(cls, module_path: str) -> dict[str, Any]:
-        """Imports a module from the given path. Function to dynamically import a module given its full module_path
-
-        Args:
-            module_path: The path to the module directory.
-
-        Returns:
-            A dictionary where keys are modules package names and values are the top-level
-            module objects of the packages. Returns an empty dictionary if no modules
-            are found or an error occurred.
-        """
-        modules = {}
-        try:
-            for item in os.listdir(module_path):
-                item_path = os.path.join(module_path, item)
-                if os.path.isdir(item_path) and os.path.exists(os.path.join(item_path, "__init__.py")):  # Check for package
-                    package_name = item  # The directory name is the package name
-                    init_path = os.path.join(item_path, "__init__.py")
-
-                    spec = importlib.util.spec_from_file_location(package_name, init_path) # Important: use __init__.py
-                    if spec is None:
-                        continue
-
-                    package = importlib.util.module_from_spec(spec)
-                    if package is None:
-                        continue
-
-                    sys.modules[package_name] = package  # Add to sys.modules
-                    spec.loader.exec_module(package)
-
-                    modules[package_name] = package
-
-        except FileNotFoundError:
-            print(f"🚨 Module directory '{module_path}' not found.")
-        except Exception as e:
-            print(f"❌ Error loading plugins: {e}")
-
-        return modules
 
     @classmethod
     def run(cls):
         """Method to run the migrations"""
         global config
 
-        modules = cls.get_modules()
+        modules = ImportUtils.get_modules()
         for module in modules:
             config = BaseConfig.get_config(APPS_PATH, module)
-            modules = cls.import_module_from_path(os.path.join(APPS_PATH, module))
+            modules = ImportUtils.import_module_from_path(os.path.join(APPS_PATH, module))
             if config["db_type"] == "postgresql":
                 for module in modules:
                     cls.run_postgresql_migrations(config=config, module=modules[module])

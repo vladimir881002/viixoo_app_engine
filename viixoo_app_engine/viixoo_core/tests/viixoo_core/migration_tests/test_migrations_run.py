@@ -1,13 +1,14 @@
 import pytest
 from unittest.mock import MagicMock, patch
-from viixoo_core.migrations import Migration, APPS_PATH
+from viixoo_core.migrations import Migration
+from viixoo_core.import_utils import ImportUtils, APPS_PATH
 from viixoo_core.config import BaseConfig
 
 
 class TestMigrationRun:
 
-    @patch.object(Migration, "get_modules")
-    @patch.object(Migration, "import_module_from_path")
+    @patch.object(ImportUtils, "get_modules")
+    @patch.object(ImportUtils, "import_module_from_path")
     @patch.object(BaseConfig, "get_config")
     @patch.object(Migration, "run_postgresql_migrations")
     def test_run_postgresql(self, mock_run_postgresql_migrations, mock_get_config, mock_import_module, mock_get_modules, capsys):
@@ -34,8 +35,8 @@ class TestMigrationRun:
         assert "🚀 Migrations completed for module module2" in captured.out
         assert "✅ Migrations completed." in captured.out
 
-    @patch.object(Migration, "get_modules")
-    @patch.object(Migration, "import_module_from_path")
+    @patch.object(ImportUtils, "get_modules")
+    @patch.object(ImportUtils, "import_module_from_path")
     @patch.object(BaseConfig, "get_config")
     def test_run_unsupported_db(self, mock_get_config, mock_import_module, mock_get_modules):
         """Test run method with an unsupported database type."""
@@ -53,8 +54,8 @@ class TestMigrationRun:
         mock_import_module.assert_called_once()
         mock_get_config.assert_called_once()
     
-    @patch.object(Migration, "get_modules")
-    @patch.object(Migration, "import_module_from_path")
+    @patch.object(ImportUtils, "get_modules")
+    @patch.object(ImportUtils, "import_module_from_path")
     @patch.object(BaseConfig, "get_config")
     @patch.object(Migration, "run_postgresql_migrations")
     def test_run_module_exception(self, mock_run_postgresql_migrations, mock_get_config, mock_import_module, mock_get_modules, capsys):
@@ -76,8 +77,8 @@ class TestMigrationRun:
         assert mock_get_config.call_count == 2
         mock_run_postgresql_migrations.assert_called_once()
 
-    @patch.object(Migration, "get_modules")
-    @patch.object(Migration, "import_module_from_path")
+    @patch.object(ImportUtils, "get_modules")
+    @patch.object(ImportUtils, "import_module_from_path")
     @patch.object(BaseConfig, "get_config")
     @patch.object(Migration, "run_postgresql_migrations")
     def test_run_no_modules(self, mock_run_postgresql_migrations, mock_get_config, mock_import_module, mock_get_modules, capsys):
