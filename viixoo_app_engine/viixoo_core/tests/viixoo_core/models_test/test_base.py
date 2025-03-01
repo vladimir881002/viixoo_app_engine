@@ -28,6 +28,7 @@ class TestBaseDBModel:
         assert hasattr(BaseDBModel, "create")
         assert hasattr(BaseDBModel, "delete")
         assert hasattr(BaseDBModel, "search")
+        assert hasattr(BaseDBModel, "search_load")
 
         assert getattr(BaseDBModel, "get_connection").__isabstractmethod__
         assert getattr(BaseDBModel, "query_select").__isabstractmethod__
@@ -38,6 +39,7 @@ class TestBaseDBModel:
         assert getattr(BaseDBModel, "create").__isabstractmethod__
         assert getattr(BaseDBModel, "delete").__isabstractmethod__
         assert getattr(BaseDBModel, "search").__isabstractmethod__
+        assert getattr(BaseDBModel, "search_load").__isabstractmethod__
     
     def test_base_db_model_cannot_be_instantiated(self):
         """Test that the abstract methods cannot be instanced."""
@@ -78,4 +80,14 @@ class TestBaseDBModel:
                 pass
 
         # Act - Assert
-        ConcreteModel()
+        model = ConcreteModel()
+        model.get_connection()
+        model.query_select()
+        model.query_insert([])
+        model.query_update([], [])
+        model.query_delete([])
+        model.write([])
+        model.create([])
+        model.delete([])
+        model.search([])
+        model.search_load([])
