@@ -65,3 +65,10 @@ class BaseDBModel(BaseModel, ABC):
             Search the given rows from the table. Filter by selectors. If not selectors are given, return all rows.
         """
         pass
+
+    @abstractmethod
+    def search_load(self, selectors: List[Dict]):
+        """
+            Search the given rows from the table. Filter by selectors. If not selectors are given, return all rows.
+        """
+        pass
