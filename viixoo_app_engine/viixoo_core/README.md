@@ -72,6 +72,7 @@ Here's a list of useful commands for working with the Viixoo App Engine:
     *   **`uvicorn`**: The command to run the Uvicorn server.
     *   **`viixoo_core.app:app`**: The module (`viixoo_core.app`) and the FastAPI instance (`app`) to run.
     *   **`--reload`**: Enables automatic reloading when code changes are detected.
+
 *   **Run the application using the shortcut:**
 
     ```bash
@@ -96,7 +97,7 @@ Here's a list of useful commands for working with the Viixoo App Engine:
 ### 📂 Project Structure
 
 This project is organized into several key directories:
-
+```
 viixoo_app_engine/
 ├── viixoo_core/                 # Framework Core
 │   ├── __init__.py
@@ -131,7 +132,7 @@ viixoo_app_engine/
 ├── setup.py                      # Package installation configuration
 ├── requirements-dev.txt          # Development dependencies
 └── README.md                     # Project documentation
-
+```
 
 ### Core Components (`viixoo_core/`)
 
