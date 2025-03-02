@@ -11,7 +11,7 @@ app = FastAPI(title="An app powered by Viixoo App Engine. 🚀")
 router = APIRouter()
 controller = BaseController(router)
 
-# Cargar dinámicamente todos los módulos dentro de viixoo_apps
+# Cargar dinámicamente todos los módulos dentro de viixoo_backend_apps
 def load_modules():
     print(f"📂 Loading modules in path: {APPS_PATH}")
     try:
