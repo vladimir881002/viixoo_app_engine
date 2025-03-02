@@ -5,7 +5,7 @@ import importlib
 from typing import List, Any
 
 APPS_PATH_DEFINED: str = os.environ.get("APPS_PATH", "")
-APPS_PATH: str = os.path.join(os.path.dirname(__file__), "../../viixoo_apps")
+APPS_PATH: str = os.path.join(os.path.dirname(__file__), "../../viixoo_backend_apps")
 
 if APPS_PATH_DEFINED:
     APPS_PATH = APPS_PATH_DEFINED

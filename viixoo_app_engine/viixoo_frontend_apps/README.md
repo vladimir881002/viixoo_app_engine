@@ -1,0 +1,3 @@
+### Frontend Modules (`viixoo_frontend_apps`) TBD (To be defined, work in progress)
+
+*   **`example/`:** An example of a frontend module....
