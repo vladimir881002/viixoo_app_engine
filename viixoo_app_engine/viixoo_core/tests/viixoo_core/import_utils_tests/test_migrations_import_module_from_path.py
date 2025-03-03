@@ -1,5 +1,4 @@
 from unittest.mock import MagicMock, patch
-from viixoo_core.migrations import Migration
 from viixoo_core.import_utils import ImportUtils
 import sys
 

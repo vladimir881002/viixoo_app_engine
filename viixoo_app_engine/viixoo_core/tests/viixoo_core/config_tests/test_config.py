@@ -58,7 +58,7 @@ class TestBaseConfig:
         assert config["user"] == "test_user"
         assert config["password"] == "test_password"
         assert config["host"] == "test_host"
-        assert config["port"] == 1234
+        assert config["port"] == 1234        
 
     @patch("os.path.exists")
     def test_from_file_not_found(self, mock_exists):
