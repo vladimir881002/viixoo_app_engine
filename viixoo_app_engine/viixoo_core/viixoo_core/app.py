@@ -3,10 +3,18 @@ from viixoo_core.routes.base_controller import BaseController
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.openapi.docs import get_swagger_ui_html
 from viixoo_core.import_utils import APPS_PATH, ImportUtils
+from starlette.middleware.cors import CORSMiddleware
 
 API_PREFIX = "/v1"
 
 app = FastAPI(title="An app powered by Viixoo App Engine. 🚀")
+app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://localhost:5173"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 router = APIRouter()
 controller = BaseController(router)
