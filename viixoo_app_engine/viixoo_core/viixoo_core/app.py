@@ -19,8 +19,8 @@ def load_modules():
         for module in modules:
             if hasattr(modules[module], "routes"):
                 _routes = modules[module].routes
-                if hasattr(_routes.routes, "register_routes"):                    
-                    _routes.routes.register_routes(controller)  # Registrar rutas                    
+                if hasattr(_routes.routes, "register_routes"):
+                    _routes.routes.register_routes(controller)  # Registrar rutas
                     print(f"✅ Module loaded: {module}")
                 else:
                     print(f"⚠️ {module} don't have routes, ignoring...")
