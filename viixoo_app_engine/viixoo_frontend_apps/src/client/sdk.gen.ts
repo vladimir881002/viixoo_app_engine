@@ -6,8 +6,7 @@ import { request as __request } from "./core/request"
 import type {
   ItemsReadItemsData,
   ItemsReadItemsResponse,
-  ItemsReadItemData,
-  ItemsReadItemResponse,
+  WorkOrdersReadItemsResponse,
   LoginLoginAccessTokenData,
   LoginLoginAccessTokenResponse,
   LoginTestTokenResponse,
@@ -47,6 +46,35 @@ export class ItemsService {
     })
   }
 }
+
+
+export class WorkOrdersService {
+  /**
+   * Read WorkOrders
+   * Retrieve workorders.
+   * @param data The data for the request.
+   * @param data.skip
+   * @param data.limit
+   * @returns WorkOrders Successful Response
+   * @throws ApiError
+   */
+  public static readWorkOrders(
+    data: ItemsReadItemsData = {},
+  ): CancelablePromise<WorkOrdersReadItemsResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/work-orders/",
+      query: {
+        skip: data.skip,
+        limit: data.limit,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+}
+
 
 export class LoginService {
   /**

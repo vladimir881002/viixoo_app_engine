@@ -5,6 +5,7 @@ import type { IconType } from "react-icons/lib"
 
 const items = [
   { icon: FiBriefcase, title: "Órdenes de fabricación", path: "/items" },
+  { icon: FiBriefcase, title: "Órdenes de trabajo", path: "/workorders" },
 ]
 
 interface SidebarItemsProps {

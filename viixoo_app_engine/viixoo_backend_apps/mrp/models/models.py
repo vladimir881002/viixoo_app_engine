@@ -14,6 +14,7 @@ class Component(BaseModel):
 
 
 class Time(BaseModel):
+    time_id: int
     employee: str
     duration: float
     date_start: str
@@ -66,6 +67,10 @@ class UpdatePassword(BaseModel):
 class Message(BaseModel):
     message: str
 
-class ProductionsOrder(BaseModel):
+class ProductionOrders(BaseModel):
     data: list[ProductionOrder]
+    count: int
+
+class WorkOrders(BaseModel):
+    data: list[WorkOrder]
     count: int

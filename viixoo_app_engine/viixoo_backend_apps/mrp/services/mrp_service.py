@@ -1,16 +1,18 @@
 from datetime import timedelta
-from ..models.models import Token, User, UpdatePassword, Message, ProductionsOrder
+from ..models.models import Token, User, UpdatePassword, Message, ProductionOrders, WorkOrders
 from typing import Any
 import requests
 import logging
 import json
 import jwt
+import os
 from viixoo_core.services.base_service import BaseService
 from fastapi import Depends, HTTPException
 from typing import Annotated
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.security import OAuth2PasswordBearer
 from . import security
+import configparser
 
 _logger = logging.getLogger(__name__)
 
@@ -18,7 +20,10 @@ reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl="/login/access-token"
 )
 SECRET_KEY = security.SECRET_KEY
-URL_ODOO = "http://127.0.0.1:8017"
+config = configparser.ConfigParser()
+config_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'mrp.conf')
+config.read(config_file_path)
+URL_ODOO = config.get('settings_odoo', 'url_odoo')
 TOKEN_ODOO = "sdgsd324erfdfgwe4erew-fdgs5434fgr2@sda-dsfsdfsf#"
 
 class MrpService(BaseService):
@@ -142,6 +147,36 @@ class MrpService(BaseService):
         else:
             response = json.loads(odoo_response.text)
             if response.get("status") == "success":
-                return ProductionsOrder(data=response.get("production_order_ids"), count=response.get("count"))
+                return ProductionOrders(data=response.get("production_order_ids"), count=response.get("count"))
+            else:
+                raise HTTPException(status_code=500)
+            
+    def get_workorders(self, token: Annotated[str, Depends(reusable_oauth2)], skip: int = 0, limit: int = 100
+        ) -> Any:
+        headers = {
+            "Auth-Token": TOKEN_ODOO,
+            "Content-Type": "application/json",
+        }
+        try:
+            payload = jwt.decode(
+                token, SECRET_KEY, algorithms=[security.ALGORITHM]
+            )
+            data = {"employee_id": payload.get("sub"), "start": skip, "limit": limit}
+            odoo_response = requests.get(
+                URL_ODOO+"/hemago/get_workorder/",
+                headers=headers,
+                data=json.dumps(data),
+                verify=True,
+                timeout=100,
+            )
+        except Exception as e:
+            error_str = str(e)
+            _logger.error("Ha ocurrido un error al enviar la solicitud a Odoo")
+            _logger.error(error_str)
+            raise HTTPException(status_code=400, detail="Ha ocurrido un error al enviar la solicitud a Odoo")
+        else:
+            response = json.loads(odoo_response.text)
+            if response.get("status") == "success":
+                return WorkOrders(data=response.get("workorder_ids"), count=response.get("count"))
             else:
                 raise HTTPException(status_code=500)

@@ -13,6 +13,15 @@ export type HTTPValidationError = {
   detail?: Array<ValidationError>
 }
 
+export type TimeEmployeePublic = {
+  time_id: number
+  employee: string
+  duration: number
+  date_start: string
+  date_end: string | null
+  loss: string
+}
+
 export type WorkOrderPublic = {
   workorder_id: number
   name: string
@@ -29,6 +38,7 @@ export type WorkOrderPublic = {
   date_finished: string | null
   url_document_instructions: string | null
   urls_plans: string | null
+  time_ids: Array<TimeEmployeePublic>
 }
 
 export type ComponentPublic = {
@@ -53,6 +63,11 @@ export type ProductionOrderPublic = {
 
 export type ProductionOrdersPublic = {
   data: Array<ProductionOrderPublic>
+  count: number
+}
+
+export type WorkOrdersPublic = {
+  data: Array<WorkOrderPublic>
   count: number
 }
 
@@ -100,6 +115,8 @@ export type ItemsReadItemsData = {
 }
 
 export type ItemsReadItemsResponse = ProductionOrdersPublic
+
+export type WorkOrdersReadItemsResponse = WorkOrdersPublic
 
 export type ItemsCreateItemResponse = ProductionOrderPublic
 

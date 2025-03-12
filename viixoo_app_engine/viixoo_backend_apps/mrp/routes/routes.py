@@ -9,5 +9,6 @@ def register_routes(controller: BaseController):
     controller.add_route("/users/me/password", service.reset_password, methods=["PATCH"])
 
     controller.add_route("/production-orders", service.get_production_orders, methods=["GET"])
+    controller.add_route("/work-orders", service.get_workorders, methods=["GET"])
 
 register_routes = register_routes
