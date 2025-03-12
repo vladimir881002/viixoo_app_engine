@@ -7,7 +7,8 @@ class Token(BaseModel):
 
 
 class Component(BaseModel):
-    producto: str
+    move_raw_id: int
+    product: str
     quantity: float
     product_uom_qty: float
 
@@ -21,20 +22,21 @@ class Time(BaseModel):
 
 
 class WorkOrder(BaseModel):
+    workorder_id: int
     name: str
-    producto: str
+    product: str
     workcenter: str
-    qty_production: float
-    qty_produced: float
-    qty_producing: float
+    qty_production: float | None
+    qty_produced: float | None
+    qty_producing: float | None
     qty_remaining: float
     duration_expected: float
-    duration: float
+    duration: float | None
     state: str
     date_start: str
-    date_finished: str
-    url_document_instructions: str
-    urls_plans: str
+    date_finished: str | None
+    url_document_instructions: str | None
+    urls_plans: str | None
     time_ids: list["Time"]
 
 

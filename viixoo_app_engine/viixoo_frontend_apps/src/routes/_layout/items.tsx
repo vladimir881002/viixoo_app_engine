@@ -13,6 +13,7 @@ import { z } from "zod"
 
 import { ItemsService } from "@/client"
 import PendingItems from "@/components/Pending/PendingItems"
+import { DetailsProductionOrder } from "../../components/ProductionOrders/DetailsProductionOrders"
 import {
   PaginationItems,
   PaginationNextTrigger,
@@ -104,6 +105,9 @@ function ProductionOrdensTable() {
               </Table.Cell>
               <Table.Cell truncate maxW="30%">
                 {item.state}
+              </Table.Cell>
+              <Table.Cell>
+                <DetailsProductionOrder item={item} />
               </Table.Cell>
             </Table.Row>
           ))}

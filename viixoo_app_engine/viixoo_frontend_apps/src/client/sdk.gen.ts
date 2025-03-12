@@ -28,7 +28,7 @@ export class ItemsService {
    * @param data The data for the request.
    * @param data.skip
    * @param data.limit
-   * @returns ItemsPublic Successful Response
+   * @returns ProductionOrders Successful Response
    * @throws ApiError
    */
   public static readItems(
@@ -40,29 +40,6 @@ export class ItemsService {
       query: {
         skip: data.skip,
         limit: data.limit,
-      },
-      errors: {
-        422: "Validation Error",
-      },
-    })
-  }
-
-  /**
-   * Read Item
-   * Get item by ID.
-   * @param data The data for the request.
-   * @param data.id
-   * @returns ProductionOrderPublic Successful Response
-   * @throws ApiError
-   */
-  public static readItem(
-    data: ItemsReadItemData,
-  ): CancelablePromise<ItemsReadItemResponse> {
-    return __request(OpenAPI, {
-      method: "GET",
-      url: "/productionsorder/{id}",
-      path: {
-        id: data.id,
       },
       errors: {
         422: "Validation Error",
