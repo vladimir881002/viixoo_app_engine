@@ -327,32 +327,35 @@ class Migration:
         contraints_fk = []
         for col, props in schema.items():
             col_def = f"{col} {props['type']}"
-            if props.get("required"):
+            
+            if props.get("primary_key"):
+                constraints.append(f"PRIMARY KEY ({col})")
+
+            elif props.get("required") and "PRIMARY KEY" not in col_def:
                 col_def += " NOT NULL"
-            if props.get("unique"):
+            
+            if props.get("unique") and "PRIMARY KEY" not in col_def:
                 constraints.append(f"CONSTRAINT {col}_unique UNIQUE ({col})")
             
             if props.get("foreign_key"):
-                contraints_query = f""" ALTER TABLE {table.strip()} ADD CONSTRAINT {col}_fk
-                FOREIGN KEY ({col}) REFERENCES {props['foreign_key']}
-                ON DELETE CASCADE ON UPDATE CASCADE;"""
+                alter_table = f""" ALTER TABLE {table.strip()} ADD CONSTRAINT {col}_fk"""
+                references = f""" FOREIGN KEY ({col}) REFERENCES {props['foreign_key']}"""
+                fk_polities = " ON DELETE CASCADE ON UPDATE CASCADE"
+                contraints_query = f"""{alter_table}{references}{fk_polities}"""
                                 
                 if props.get("on_delete"):
-                    contraints_query.replace("ON DELETE CASCADE", f"ON DELETE {props['on_delete']}")  # 🔥
+                    contraints_query = contraints_query.replace("ON DELETE CASCADE", f"ON DELETE {props['on_delete']}")  # 🔥
                 else:
-                    contraints_query.replace("ON DELETE CASCADE", "")
+                    contraints_query = contraints_query.replace(" ON DELETE CASCADE", "")
 
                 if props.get("on_update"):
-                    contraints_query.replace("ON UPDATE CASCADE", f"ON UPDATE {props['on_update']}")  # 🔥
+                    contraints_query = contraints_query.replace("ON UPDATE CASCADE", f"ON UPDATE {props['on_update']}")  # 🔥
                 else:
-                    contraints_query.replace("ON UPDATE CASCADE", "")
+                    contraints_query = contraints_query.replace(" ON UPDATE CASCADE", "")
                 
                 contraints_fk.append(contraints_query + ";" )
-
-            if props.get("primary_key"):
-                constraints.append(f"PRIMARY KEY ({col})")
             
-            if props.get("default", None):
+            if props.get("default", None) is not None and not props.get("primary_key", None):
                 col_def += f" DEFAULT '{props['default']}'::{props['type']}"
             
             columns.append(col_def)

@@ -20,7 +20,7 @@
             "args": [
                 // Add any pytest arguments here, e.g.,
                 "."
-                // "-k", "test_get_postgresql_tables_success" // to run a specific test
+                // "-k", "test_generate_create_table_query_all_options" // to run a specific test
             ],
             "justMyCode": true, // Set to false to debug into external libraries
             "cwd": "${workspaceFolder}" // Set the working directory
