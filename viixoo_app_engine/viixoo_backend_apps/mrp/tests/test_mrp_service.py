@@ -89,5 +89,40 @@ class TestMrpEndpoints(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn("Usuario no encontrado", response.json()["detail"])
 
+    @patch('requests.get')
+    def test_get_workorders(self, mock_get):
+        mock_data = {
+            "status": "success",
+            "workorder_ids": [{
+                    'workorder_id': 1,
+                    'name': 'test workorder',
+                    'product': 'test product',
+                    'workcenter': 'test workcenter',
+                    'qty_production': 0,
+                    'qty_produced': 0,
+                    'qty_producing': 0,
+                    'qty_remaining': 1,
+                    'duration_expected': 2.30,
+                    'duration': 0,
+                    'state': 'ready',
+                    'date_start': "2025-03-12 01:47:56",
+                    'date_finished': "",
+                    'url_document_instructions': "",
+                    'urls_plans': "",
+                    'time_ids': [],
+                }],
+            "count": 1
+        }
+        mock_get.return_value.text = json.dumps(mock_data)
+        
+        response = client.get(
+            "/work-orders/?skip=0&limit=3",
+            headers={"Authorization": f"Bearer {self.valid_token}"}
+        )
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()["data"]), 1)
+        self.assertEqual(response.json()["count"], 1)
+
 if __name__ == '__main__':
     unittest.main()
