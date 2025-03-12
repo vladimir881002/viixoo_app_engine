@@ -4,13 +4,19 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.openapi.docs import get_swagger_ui_html
 from viixoo_core.import_utils import APPS_PATH, ImportUtils
 from starlette.middleware.cors import CORSMiddleware
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 API_PREFIX = "/v1"
 
 app = FastAPI(title="An app powered by Viixoo App Engine. 🚀")
+origins_str = os.getenv("ALLOWED_ORIGINS", "")
+origins = origins_str.split(",") if origins_str else []
 app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:5173"],
+        allow_origins=origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
