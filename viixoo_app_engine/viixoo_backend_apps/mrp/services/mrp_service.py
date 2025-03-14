@@ -13,18 +13,21 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.security import OAuth2PasswordBearer
 from . import security
 import configparser
+from dotenv import load_dotenv
 
 _logger = logging.getLogger(__name__)
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl="/login/access-token"
 )
+load_dotenv()
+
 SECRET_KEY = security.SECRET_KEY
 config = configparser.ConfigParser()
 config_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'mrp.conf')
 config.read(config_file_path)
 URL_ODOO = config.get('settings_odoo', 'url_odoo')
-TOKEN_ODOO = "sdgsd324erfdfgwe4erew-fdgs5434fgr2@sda-dsfsdfsf#"
+TOKEN_ODOO = os.getenv("TOKEN_ODOO", "")
 
 class MrpService(BaseService):
     def __init__(self):        

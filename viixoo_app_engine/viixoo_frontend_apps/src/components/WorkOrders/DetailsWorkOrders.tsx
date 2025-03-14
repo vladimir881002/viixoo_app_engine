@@ -6,6 +6,7 @@ import {
   VStack,
   Tabs,
   Table,
+  Box,
 } from "@chakra-ui/react"
 import { useState } from "react"
 import { GrView } from "react-icons/gr";
@@ -142,7 +143,7 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                   {item?.state || ""}
                 </Text>
               </Field>
-              <Tabs.Root defaultValue="my-profile" variant="subtle">
+              <Tabs.Root defaultValue="tab-work-order-time" variant="subtle">
                 <Tabs.List>
                     <Tabs.Trigger key="1" value="tab-work-order-time">
                     Seguimiento de tiempo
@@ -151,8 +152,9 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                     Instrucciones
                     </Tabs.Trigger>
                 </Tabs.List>
-               <Tabs.Content key="1" value="work-order-time">
-                    <Table.Root  size="sm" showColumnBorder>
+               <Tabs.Content key="1" value="tab-work-order-time">
+                  <Box maxH="100px" overflowY="auto" borderWidth="1px" borderRadius="md">
+                    <Table.Root maxH="100px" size="sm" showColumnBorder>
                       <Table.Header>
                         <Table.Row>
                           <Table.ColumnHeader w="sm">Empleado</Table.ColumnHeader>
@@ -180,8 +182,9 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                         ))}
                       </Table.Body>
                     </Table.Root>
+                  </Box>
                 </Tabs.Content>
-                <Tabs.Content key="2" value="work-order-intructions">
+                <Tabs.Content key="2" value="tab-instructions">
                     <Field
                     label="URL con las instrucciones"
                   >
