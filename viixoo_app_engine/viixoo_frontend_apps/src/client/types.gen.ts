@@ -105,7 +105,7 @@ export type UpdatePassword = {
   new_password: string
 }
 
-export type ChangeStarteWorkOrder = {
+export type ChangeStateWorkOrder = {
   workorder_id: number
 }
 
@@ -187,8 +187,8 @@ export type UsersUpdatePasswordMeData = {
   requestBody: UpdatePassword
 }
 
-export type ChangeStarteWorkOrderData = {
-  requestBody: ChangeStarteWorkOrder
+export type ChangeStateWorkOrderData = {
+  requestBody: ChangeStateWorkOrder
 }
 
 export type BlockWorkOrderData = {

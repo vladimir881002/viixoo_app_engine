@@ -324,3 +324,32 @@ class MrpService(BaseService):
                 return Message(message="Orden de trabajo pausada satisfactoriamente")
             else:
                raise HTTPException(status_code=400, detail="Orden no encontrada")
+            
+    def unblock_workorder(self, token: Annotated[str, Depends(reusable_oauth2)], body: ChangeStateWorkOrder) -> Any:
+        headers = {
+            "Auth-Token": TOKEN_ODOO,
+            "Content-Type": "application/json",
+        }
+        try:
+            payload = jwt.decode(
+                token, SECRET_KEY, algorithms=[security.ALGORITHM]
+            )
+            data = {"employee_id": payload.get("sub"), "workorder_id": body.workorder_id}
+            odoo_response = requests.post(
+                URL_ODOO+"/hemago/unblock_workorder/",
+                headers=headers,
+                data=json.dumps(data),
+                verify=True,
+                timeout=100,
+            )
+        except Exception as e:
+            error_str = str(e)
+            _logger.error("Ha ocurrido un error al enviar la solicitud a Odoo")
+            _logger.error(error_str)
+            raise HTTPException(status_code=400, detail="Orden no encontrada")
+        else:
+            response = json.loads(odoo_response.text)
+            if response.get("status") == "success":
+                return Message(message="Orden de trabajo desbloqueada satisfactoriamente")
+            else:
+               raise HTTPException(status_code=400, detail="Orden no encontrada")

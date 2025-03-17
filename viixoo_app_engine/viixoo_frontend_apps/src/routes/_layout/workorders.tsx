@@ -15,7 +15,7 @@ import { z } from "zod"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 
-import { type ApiError, type ChangeStarteWorkOrder, WorkOrdersService } from "@/client"
+import { type ApiError, type ChangeStateWorkOrder, WorkOrdersService } from "@/client"
 import PendingWorkOrders from "@/components/Pending/PendingWorkOrders"
 import { DetailsWorkOrders } from "../../components/WorkOrders/DetailsWorkOrders"
 import { BlockWorkOrders } from "../../components/WorkOrders/BlockWorkOrders"
@@ -64,7 +64,7 @@ function WorkOrdensTable() {
   const queryClient = useQueryClient()  
   const { showSuccessToast } = useCustomToast()
   const mutationStartWorkorder = useMutation({
-    mutationFn: (data: ChangeStarteWorkOrder) =>
+    mutationFn: (data: ChangeStateWorkOrder) =>
       WorkOrdersService.startWorkorder({ requestBody: data }),
     onSuccess: () => {
       showSuccessToast("Orden iniciada satisfactoriamente.")
@@ -75,12 +75,12 @@ function WorkOrdensTable() {
     },
   })
 
-  const onClickStartWorkorder = async (data: ChangeStarteWorkOrder) => {
+  const onClickStartWorkorder = async (data: ChangeStateWorkOrder) => {
     mutationStartWorkorder.mutate(data)
   }
 
   const mutationPauseWorkorder = useMutation({
-    mutationFn: (data: ChangeStarteWorkOrder) =>
+    mutationFn: (data: ChangeStateWorkOrder) =>
       WorkOrdersService.pauseWorkorder({ requestBody: data }),
     onSuccess: () => {
       showSuccessToast("Orden pausada satisfactoriamente.")
@@ -91,12 +91,12 @@ function WorkOrdensTable() {
     },
   })
 
-  const onClickPauseWorkorder= async (data: ChangeStarteWorkOrder) => {
+  const onClickPauseWorkorder= async (data: ChangeStateWorkOrder) => {
     mutationPauseWorkorder.mutate(data)
   }
 
   const mutationFinishWorkorder = useMutation({
-    mutationFn: (data: ChangeStarteWorkOrder) =>
+    mutationFn: (data: ChangeStateWorkOrder) =>
       WorkOrdersService.finishWorkorder({ requestBody: data }),
     onSuccess: () => {
       showSuccessToast("Orden terminada satisfactoriamente.")
@@ -107,8 +107,24 @@ function WorkOrdensTable() {
     },
   })
 
-  const onClickFinishWorkorder= async (data: ChangeStarteWorkOrder) => {
+  const onClickFinishWorkorder= async (data: ChangeStateWorkOrder) => {
     mutationFinishWorkorder.mutate(data)
+  }
+
+  const mutationUnblockWorkorder = useMutation({
+    mutationFn: (data: ChangeStateWorkOrder) =>
+      WorkOrdersService.unblockWorkorder({ requestBody: data }),
+    onSuccess: () => {
+      showSuccessToast("Orden desbloqueada satisfactoriamente.")
+      queryClient.invalidateQueries({ queryKey: ["items"] })
+    },
+    onError: (err: ApiError) => {
+      handleError(err)
+    },
+  })
+
+  const onClickUnblockWorkorder= async (data: ChangeStateWorkOrder) => {
+    mutationUnblockWorkorder.mutate(data)
   }
 
   if (isLoading) {
@@ -176,6 +192,11 @@ function WorkOrdensTable() {
               </Table.Cell>
               <Table.Cell>
                 <BlockWorkOrders item={item} />                
+              </Table.Cell>
+              <Table.Cell>
+                <Button size="xs" onClick={() => onClickUnblockWorkorder({'workorder_id': item.workorder_id})} colorPalette="red" display={
+                  ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state != 'blocked'? 'none' : 'flex'
+                }>Desbloquear</Button>
               </Table.Cell>
             </Table.Row>
           ))}

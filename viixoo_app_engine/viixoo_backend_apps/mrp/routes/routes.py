@@ -12,6 +12,7 @@ def register_routes(controller: BaseController):
     controller.add_route("/reasons-loss", service.get_reasons_loss, methods=["GET"])
     controller.add_route("/workorder/start", service.start_workorder, methods=["PATCH"])
     controller.add_route("/workorder/block", service.block_workorder, methods=["PATCH"])
+    controller.add_route("/workorder/unblock", service.unblock_workorder, methods=["PATCH"])
     controller.add_route("/workorder/finish", service.finish_workorder, methods=["PATCH"])
     controller.add_route("/workorder/pause", service.pause_workorder, methods=["PATCH"])
 

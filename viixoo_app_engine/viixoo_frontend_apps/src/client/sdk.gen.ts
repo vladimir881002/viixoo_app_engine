@@ -18,7 +18,7 @@ import type {
   UsersUpdatePasswordMeData,
   UsersUpdatePasswordMeResponse,
   UtilsHealthCheckResponse,
-  ChangeStarteWorkOrderData,
+  ChangeStateWorkOrderData,
   ChangeStateResponse,
   BlockWorkOrderData,
   ReasonsLossReadItemsResponse,
@@ -104,7 +104,7 @@ export class WorkOrdersService {
    * @throws ApiError
    */
   public static startWorkorder(
-    data: ChangeStarteWorkOrderData,
+    data: ChangeStateWorkOrderData,
   ): CancelablePromise<ChangeStateResponse> {
     return __request(OpenAPI, {
       method: "PATCH",
@@ -139,6 +139,27 @@ export class WorkOrdersService {
   }
 
    /**
+   * Unblock workorder
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns Message Successful Response
+   * @throws ApiError
+   */
+   public static unblockWorkorder(
+    data: ChangeStateWorkOrderData,
+  ): CancelablePromise<ChangeStateResponse> {
+    return __request(OpenAPI, {
+      method: "PATCH",
+      url: "/workorder/unblock",
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+   /**
    * Pause workorder
    * @param data The data for the request.
    * @param data.requestBody
@@ -146,7 +167,7 @@ export class WorkOrdersService {
    * @throws ApiError
    */
    public static pauseWorkorder(
-    data: ChangeStarteWorkOrderData,
+    data: ChangeStateWorkOrderData,
   ): CancelablePromise<ChangeStateResponse> {
     return __request(OpenAPI, {
       method: "PATCH",
@@ -167,7 +188,7 @@ export class WorkOrdersService {
    * @throws ApiError
    */
    public static finishWorkorder(
-    data: ChangeStarteWorkOrderData,
+    data: ChangeStateWorkOrderData,
   ): CancelablePromise<ChangeStateResponse> {
     return __request(OpenAPI, {
       method: "PATCH",
