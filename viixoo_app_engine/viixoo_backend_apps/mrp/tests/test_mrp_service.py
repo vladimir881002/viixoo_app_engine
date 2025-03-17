@@ -4,6 +4,8 @@ from fastapi.testclient import TestClient
 from viixoo_core.app import app
 from datetime import timedelta
 import json
+import random
+import string
 from mrp.services import security
 
 client = TestClient(app)
@@ -310,7 +312,7 @@ class TestMrpEndpoints(unittest.TestCase):
         response = client.patch(
             "/users/me/password",
             headers={"Authorization": f"Bearer {self.valid_token}"},
-            json={"new_password": "sa32redf213a", "current_password": "342dsadq/w34w"}
+            json={"new_password": self.generate_test_password(), "current_password": self.generate_test_password()}
         )
         self.assertEqual(response.status_code, 400)
 
@@ -326,10 +328,16 @@ class TestMrpEndpoints(unittest.TestCase):
         response = client.patch(
             "/users/me/password",
             headers={"Authorization": f"Bearer {self.valid_token}"},
-            json={"new_password": "sa32redf213a", "current_password": "342dsadq/w34w"}
+            json={"new_password": self.generate_test_password(), "current_password": self.generate_test_password()}
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json().get('message'), "Contraseña cambiada satisfactoriamente")
+
+    def generate_test_password(self):
+        characters = string.ascii_letters + string.digits        
+        password = ''.join(random.choice(characters) for _ in range(15))     
+        return password
+
 
 if __name__ == '__main__':
     unittest.main()
