@@ -40,7 +40,7 @@ export const DetailsProductionOrder = ({ item }: ProductionOrderProps) => {
       onOpenChange={({ open }) => setIsOpen(open)}
     >
       <DialogTrigger asChild>
-        <Button variant="ghost">
+        <Button size="xs" colorPalette="gray" variant="ghost">
           <GrView fontSize="16px" />
           Detalles
         </Button>

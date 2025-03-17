@@ -40,7 +40,7 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
       onOpenChange={({ open }) => setIsOpen(open)}
     >
       <DialogTrigger asChild>
-        <Button variant="ghost">
+        <Button size="xs" colorPalette="gray" variant="ghost">
           <GrView fontSize="16px" />
         </Button>
       </DialogTrigger>

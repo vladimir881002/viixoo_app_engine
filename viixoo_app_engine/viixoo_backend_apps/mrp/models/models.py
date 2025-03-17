@@ -15,6 +15,7 @@ class Component(BaseModel):
 
 class Time(BaseModel):
     time_id: int
+    employee_id: int
     employee: str
     duration: float
     date_start: str
@@ -27,6 +28,11 @@ class WorkOrder(BaseModel):
     name: str
     product: str
     workcenter: str
+    production_state: str
+    working_state: str
+    is_user_working: bool
+    quality_state: str | None
+    test_type: str | None
     qty_production: float | None
     qty_produced: float | None
     qty_producing: float | None
@@ -74,3 +80,18 @@ class ProductionOrders(BaseModel):
 class WorkOrders(BaseModel):
     data: list[WorkOrder]
     count: int
+
+class ReasonLoss(BaseModel):
+    label: str = Field(max_length=255)
+    value: int
+
+class ReasonsLoss(BaseModel):
+    data: list[ReasonLoss]
+
+class ChangeStateWorkOrder(BaseModel):
+    workorder_id: int
+
+class BlockWorkOrder(BaseModel):
+    workorder_id: int
+    loss_id: int
+    description: str | None
