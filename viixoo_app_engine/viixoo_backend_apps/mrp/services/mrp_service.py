@@ -1,5 +1,5 @@
 from datetime import timedelta
-from ..models.models import Token, User, UpdatePassword, Message, ProductionOrders, WorkOrders
+from ..models.models import Token, User, UpdatePassword, Message, ProductionOrders, WorkOrders, ReasonsLoss, ChangeStateWorkOrder, BlockWorkOrder
 from typing import Any
 import requests
 import logging
@@ -13,18 +13,21 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.security import OAuth2PasswordBearer
 from . import security
 import configparser
+from dotenv import load_dotenv
 
 _logger = logging.getLogger(__name__)
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl="/login/access-token"
 )
+load_dotenv()
+
 SECRET_KEY = security.SECRET_KEY
 config = configparser.ConfigParser()
 config_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'mrp.conf')
 config.read(config_file_path)
 URL_ODOO = config.get('settings_odoo', 'url_odoo')
-TOKEN_ODOO = "sdgsd324erfdfgwe4erew-fdgs5434fgr2@sda-dsfsdfsf#"
+TOKEN_ODOO = os.getenv("TOKEN_ODOO", "")
 
 class MrpService(BaseService):
     def __init__(self):        
@@ -180,3 +183,173 @@ class MrpService(BaseService):
                 return WorkOrders(data=response.get("workorder_ids"), count=response.get("count"))
             else:
                 raise HTTPException(status_code=500)
+            
+    def get_reasons_loss(self, token: Annotated[str, Depends(reusable_oauth2)]
+        ) -> Any:
+        headers = {
+            "Auth-Token": TOKEN_ODOO,
+            "Content-Type": "application/json",
+        }
+        try:
+            odoo_response = requests.get(
+                URL_ODOO+"/hemago/get_reasons_loss/",
+                headers=headers,
+                verify=True,
+                timeout=100,
+            )
+        except Exception as e:
+            error_str = str(e)
+            _logger.error("Ha ocurrido un error al enviar la solicitud a Odoo")
+            _logger.error(error_str)
+            raise HTTPException(status_code=400, detail="Ha ocurrido un error al enviar la solicitud a Odoo")
+        else:
+            response = json.loads(odoo_response.text)
+            if response.get("status") == "success":
+                return ReasonsLoss(data=response.get("loss_ids"))
+            else:
+                raise HTTPException(status_code=500)
+            
+    def start_workorder(self, token: Annotated[str, Depends(reusable_oauth2)], body: ChangeStateWorkOrder) -> Any:
+        headers = {
+            "Auth-Token": TOKEN_ODOO,
+            "Content-Type": "application/json",
+        }
+        try:
+            payload = jwt.decode(
+                token, SECRET_KEY, algorithms=[security.ALGORITHM]
+            )
+            data = {"employee_id": payload.get("sub"), "workorder_id": body.workorder_id}
+            odoo_response = requests.post(
+                URL_ODOO+"/hemago/start_workorder/",
+                headers=headers,
+                data=json.dumps(data),
+                verify=True,
+                timeout=100,
+            )
+        except Exception as e:
+            error_str = str(e)
+            _logger.error("Ha ocurrido un error al enviar la solicitud a Odoo")
+            _logger.error(error_str)
+            raise HTTPException(status_code=400, detail="Orden no encontrada")
+        else:
+            response = json.loads(odoo_response.text)
+            if response.get("status") == "success":
+                return Message(message="Orden de trabajo iniciada satisfactoriamente")
+            else:
+               raise HTTPException(status_code=400, detail="Orden no encontrada")
+            
+    def block_workorder(self, token: Annotated[str, Depends(reusable_oauth2)], body: BlockWorkOrder) -> Any:
+        headers = {
+            "Auth-Token": TOKEN_ODOO,
+            "Content-Type": "application/json",
+        }
+        try:
+            payload = jwt.decode(
+                token, SECRET_KEY, algorithms=[security.ALGORITHM]
+            )
+            data = {"employee_id": payload.get("sub"), "workorder_id": body.workorder_id, "loss_id": body.loss_id, "description": body.description}
+            odoo_response = requests.post(
+                URL_ODOO+"/hemago/block_workorder/",
+                headers=headers,
+                data=json.dumps(data),
+                verify=True,
+                timeout=100,
+            )
+        except Exception as e:
+            error_str = str(e)
+            _logger.error("Ha ocurrido un error al enviar la solicitud a Odoo")
+            _logger.error(error_str)
+            raise HTTPException(status_code=400, detail="Orden no encontrada")
+        else:
+            response = json.loads(odoo_response.text)
+            if response.get("status") == "success":
+                return Message(message="Orden de trabajo bloqueada satisfactoriamente")
+            else:
+               raise HTTPException(status_code=400, detail="Orden no encontrada")
+            
+    def finish_workorder(self, token: Annotated[str, Depends(reusable_oauth2)], body: ChangeStateWorkOrder) -> Any:
+        headers = {
+            "Auth-Token": TOKEN_ODOO,
+            "Content-Type": "application/json",
+        }
+        try:
+            payload = jwt.decode(
+                token, SECRET_KEY, algorithms=[security.ALGORITHM]
+            )
+            data = {"employee_id": payload.get("sub"), "workorder_id": body.workorder_id}
+            odoo_response = requests.post(
+                URL_ODOO+"/hemago/finish_workorder/",
+                headers=headers,
+                data=json.dumps(data),
+                verify=True,
+                timeout=100,
+            )
+        except Exception as e:
+            error_str = str(e)
+            _logger.error("Ha ocurrido un error al enviar la solicitud a Odoo")
+            _logger.error(error_str)
+            raise HTTPException(status_code=400, detail="Orden no encontrada")
+        else:
+            response = json.loads(odoo_response.text)
+            if response.get("status") == "success":
+                return Message(message="Orden de trabajo finalizada satisfactoriamente")
+            else:
+               raise HTTPException(status_code=400, detail="Orden no encontrada")
+            
+    def pause_workorder(self, token: Annotated[str, Depends(reusable_oauth2)], body: ChangeStateWorkOrder) -> Any:
+        headers = {
+            "Auth-Token": TOKEN_ODOO,
+            "Content-Type": "application/json",
+        }
+        try:
+            payload = jwt.decode(
+                token, SECRET_KEY, algorithms=[security.ALGORITHM]
+            )
+            data = {"employee_id": payload.get("sub"), "workorder_id": body.workorder_id}
+            odoo_response = requests.post(
+                URL_ODOO+"/hemago/pause_workorder/",
+                headers=headers,
+                data=json.dumps(data),
+                verify=True,
+                timeout=100,
+            )
+        except Exception as e:
+            error_str = str(e)
+            _logger.error("Ha ocurrido un error al enviar la solicitud a Odoo")
+            _logger.error(error_str)
+            raise HTTPException(status_code=400, detail="Orden no encontrada")
+        else:
+            response = json.loads(odoo_response.text)
+            if response.get("status") == "success":
+                return Message(message="Orden de trabajo pausada satisfactoriamente")
+            else:
+               raise HTTPException(status_code=400, detail="Orden no encontrada")
+            
+    def unblock_workorder(self, token: Annotated[str, Depends(reusable_oauth2)], body: ChangeStateWorkOrder) -> Any:
+        headers = {
+            "Auth-Token": TOKEN_ODOO,
+            "Content-Type": "application/json",
+        }
+        try:
+            payload = jwt.decode(
+                token, SECRET_KEY, algorithms=[security.ALGORITHM]
+            )
+            data = {"employee_id": payload.get("sub"), "workorder_id": body.workorder_id}
+            odoo_response = requests.post(
+                URL_ODOO+"/hemago/unblock_workorder/",
+                headers=headers,
+                data=json.dumps(data),
+                verify=True,
+                timeout=100,
+            )
+        except Exception as e:
+            error_str = str(e)
+            _logger.error("Ha ocurrido un error al enviar la solicitud a Odoo")
+            _logger.error(error_str)
+            raise HTTPException(status_code=400, detail="Orden no encontrada")
+        else:
+            response = json.loads(odoo_response.text)
+            if response.get("status") == "success":
+                return Message(message="Orden de trabajo desbloqueada satisfactoriamente")
+            else:
+               raise HTTPException(status_code=400, detail="Orden no encontrada")

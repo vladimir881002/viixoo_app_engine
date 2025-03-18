@@ -16,6 +16,7 @@ export type HTTPValidationError = {
 export type TimeEmployeePublic = {
   time_id: number
   employee: string
+  employee_id: number
   duration: number
   date_start: string
   date_end: string | null
@@ -27,6 +28,11 @@ export type WorkOrderPublic = {
   name: string
   product: string
   workcenter: string
+  production_state: string
+  working_state: string
+  is_user_working: boolean
+  quality_state: string | null
+  test_type: string | ""
   qty_production: number
   qty_produced: number
   qty_producing: number
@@ -39,6 +45,11 @@ export type WorkOrderPublic = {
   url_document_instructions: string | null
   urls_plans: string | null
   time_ids: Array<TimeEmployeePublic>
+}
+
+export type ReasonLossPublic = {
+  value: number
+  label: string
 }
 
 export type ComponentPublic = {
@@ -71,6 +82,10 @@ export type WorkOrdersPublic = {
   count: number
 }
 
+export type ReasonsLossPublic = {
+  data: Array<ReasonLossPublic>
+}
+
 export type Message = {
   message: string
 }
@@ -88,6 +103,16 @@ export type Token = {
 export type UpdatePassword = {
   current_password: string
   new_password: string
+}
+
+export type ChangeStateWorkOrder = {
+  workorder_id: number
+}
+
+export type BlockWorkOrder = {
+  workorder_id: number
+  loss_id: number
+  description: string | null
 }
 
 export type UserPublic = {
@@ -117,6 +142,8 @@ export type ItemsReadItemsData = {
 export type ItemsReadItemsResponse = ProductionOrdersPublic
 
 export type WorkOrdersReadItemsResponse = WorkOrdersPublic
+
+export type ReasonsLossReadItemsResponse = ReasonsLossPublic
 
 export type ItemsCreateItemResponse = ProductionOrderPublic
 
@@ -160,7 +187,17 @@ export type UsersUpdatePasswordMeData = {
   requestBody: UpdatePassword
 }
 
+export type ChangeStateWorkOrderData = {
+  requestBody: ChangeStateWorkOrder
+}
+
+export type BlockWorkOrderData = {
+  requestBody: BlockWorkOrder
+}
+
 export type UsersUpdatePasswordMeResponse = Message
+
+export type ChangeStateResponse = Message
 
 export type UsersRegisterUserResponse = UserPublic
 

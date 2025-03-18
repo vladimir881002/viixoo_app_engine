@@ -5,15 +5,20 @@ import {
   Heading,
   Table,
   VStack,
+  Button,
 } from "@chakra-ui/react"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { FiSearch } from "react-icons/fi"
 import { z } from "zod"
 
-import { WorkOrdersService } from "@/client"
+import useCustomToast from "@/hooks/useCustomToast"
+import { handleError } from "@/utils"
+
+import { type ApiError, type ChangeStateWorkOrder, WorkOrdersService } from "@/client"
 import PendingWorkOrders from "@/components/Pending/PendingWorkOrders"
 import { DetailsWorkOrders } from "../../components/WorkOrders/DetailsWorkOrders"
+import { BlockWorkOrders } from "../../components/WorkOrders/BlockWorkOrders"
 import {
   PaginationItems,
   PaginationNextTrigger,
@@ -56,6 +61,71 @@ function WorkOrdensTable() {
   
   const items = data?.data.slice(0, PER_PAGE) ?? []
   const count = data?.count ?? 0
+  const queryClient = useQueryClient()  
+  const { showSuccessToast } = useCustomToast()
+  const mutationStartWorkorder = useMutation({
+    mutationFn: (data: ChangeStateWorkOrder) =>
+      WorkOrdersService.startWorkorder({ requestBody: data }),
+    onSuccess: () => {
+      showSuccessToast("Orden iniciada satisfactoriamente.")
+      queryClient.invalidateQueries({ queryKey: ["items"] })
+    },
+    onError: (err: ApiError) => {
+      handleError(err)
+    },
+  })
+
+  const onClickStartWorkorder = async (data: ChangeStateWorkOrder) => {
+    mutationStartWorkorder.mutate(data)
+  }
+
+  const mutationPauseWorkorder = useMutation({
+    mutationFn: (data: ChangeStateWorkOrder) =>
+      WorkOrdersService.pauseWorkorder({ requestBody: data }),
+    onSuccess: () => {
+      showSuccessToast("Orden pausada satisfactoriamente.")
+      queryClient.invalidateQueries({ queryKey: ["items"] })
+    },
+    onError: (err: ApiError) => {
+      handleError(err)
+    },
+  })
+
+  const onClickPauseWorkorder= async (data: ChangeStateWorkOrder) => {
+    mutationPauseWorkorder.mutate(data)
+  }
+
+  const mutationFinishWorkorder = useMutation({
+    mutationFn: (data: ChangeStateWorkOrder) =>
+      WorkOrdersService.finishWorkorder({ requestBody: data }),
+    onSuccess: () => {
+      showSuccessToast("Orden terminada satisfactoriamente.")
+      queryClient.invalidateQueries({ queryKey: ["items"] })
+    },
+    onError: (err: ApiError) => {
+      handleError(err)
+    },
+  })
+
+  const onClickFinishWorkorder= async (data: ChangeStateWorkOrder) => {
+    mutationFinishWorkorder.mutate(data)
+  }
+
+  const mutationUnblockWorkorder = useMutation({
+    mutationFn: (data: ChangeStateWorkOrder) =>
+      WorkOrdersService.unblockWorkorder({ requestBody: data }),
+    onSuccess: () => {
+      showSuccessToast("Orden desbloqueada satisfactoriamente.")
+      queryClient.invalidateQueries({ queryKey: ["items"] })
+    },
+    onError: (err: ApiError) => {
+      handleError(err)
+    },
+  })
+
+  const onClickUnblockWorkorder= async (data: ChangeStateWorkOrder) => {
+    mutationUnblockWorkorder.mutate(data)
+  }
 
   if (isLoading) {
     return <PendingWorkOrders />
@@ -75,7 +145,6 @@ function WorkOrdensTable() {
       </EmptyState.Root>
     )
   }
-
   return (
     <>
       <Table.Root size={{ base: "sm", md: "md" }}>
@@ -104,6 +173,30 @@ function WorkOrdensTable() {
               </Table.Cell>
               <Table.Cell>
                 <DetailsWorkOrders item={item} />
+              </Table.Cell>
+              <Table.Cell>
+                <Button size="xs" onClick={() => onClickStartWorkorder({'workorder_id': item.workorder_id})} colorPalette="green" display={
+                  ['done', 'cancel'].includes(item.state) || ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state == 'blocked' || item.is_user_working? 'none' : 'flex'
+                }>Iniciar</Button>
+              </Table.Cell>
+              <Table.Cell>
+                <Button size="xs" onClick={() => onClickPauseWorkorder({'workorder_id': item.workorder_id})} colorPalette="orange" display={
+                  ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state == 'blocked' || !item.is_user_working? 'none' : 'flex'
+                }>Pausar</Button>
+              </Table.Cell>
+              <Table.Cell>
+                <Button size="xs" onClick={() => onClickFinishWorkorder({'workorder_id': item.workorder_id})} colorPalette="green" display={
+                  ['draft', 'done'].includes(item.production_state) || item.working_state == 'blocked' || !item.is_user_working || item.quality_state != "" 
+                    || ['register_consumed_materials', 'register_byproducts', 'instructions'].includes(item.test_type)? 'none' : 'flex'
+                }>Listo</Button>
+              </Table.Cell>
+              <Table.Cell>
+                <BlockWorkOrders item={item} />                
+              </Table.Cell>
+              <Table.Cell>
+                <Button size="xs" onClick={() => onClickUnblockWorkorder({'workorder_id': item.workorder_id})} colorPalette="red" display={
+                  ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state != 'blocked'? 'none' : 'flex'
+                }>Desbloquear</Button>
               </Table.Cell>
             </Table.Row>
           ))}

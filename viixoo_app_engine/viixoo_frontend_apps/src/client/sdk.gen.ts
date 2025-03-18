@@ -18,6 +18,10 @@ import type {
   UsersUpdatePasswordMeData,
   UsersUpdatePasswordMeResponse,
   UtilsHealthCheckResponse,
+  ChangeStateWorkOrderData,
+  ChangeStateResponse,
+  BlockWorkOrderData,
+  ReasonsLossReadItemsResponse,
 } from "./types.gen"
 
 export class ItemsService {
@@ -68,6 +72,129 @@ export class WorkOrdersService {
         skip: data.skip,
         limit: data.limit,
       },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+   /**
+   * Read Reasons Loss
+   * Retrieve reasons Loss.
+   * @param data The data for the request.
+   * @returns Reasons Loss Successful Response
+   * @throws ApiError
+   */
+   public static readReasonsLoss(): CancelablePromise<ReasonsLossReadItemsResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/reasons-loss/",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+
+  /**
+   * Start workorder
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns Message Successful Response
+   * @throws ApiError
+   */
+  public static startWorkorder(
+    data: ChangeStateWorkOrderData,
+  ): CancelablePromise<ChangeStateResponse> {
+    return __request(OpenAPI, {
+      method: "PATCH",
+      url: "/workorder/start",
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Block workorder
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns Message Successful Response
+   * @throws ApiError
+   */
+  public static blockWorkorder(
+    data: BlockWorkOrderData,
+  ): CancelablePromise<ChangeStateResponse> {
+    return __request(OpenAPI, {
+      method: "PATCH",
+      url: "/workorder/block",
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+   /**
+   * Unblock workorder
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns Message Successful Response
+   * @throws ApiError
+   */
+   public static unblockWorkorder(
+    data: ChangeStateWorkOrderData,
+  ): CancelablePromise<ChangeStateResponse> {
+    return __request(OpenAPI, {
+      method: "PATCH",
+      url: "/workorder/unblock",
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+   /**
+   * Pause workorder
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns Message Successful Response
+   * @throws ApiError
+   */
+   public static pauseWorkorder(
+    data: ChangeStateWorkOrderData,
+  ): CancelablePromise<ChangeStateResponse> {
+    return __request(OpenAPI, {
+      method: "PATCH",
+      url: "/workorder/pause",
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+   /**
+   * Finish workorder
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns Message Successful Response
+   * @throws ApiError
+   */
+   public static finishWorkorder(
+    data: ChangeStateWorkOrderData,
+  ): CancelablePromise<ChangeStateResponse> {
+    return __request(OpenAPI, {
+      method: "PATCH",
+      url: "/workorder/finish",
+      body: data.requestBody,
+      mediaType: "application/json",
       errors: {
         422: "Validation Error",
       },

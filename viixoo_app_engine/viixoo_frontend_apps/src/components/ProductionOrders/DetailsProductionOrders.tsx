@@ -6,6 +6,7 @@ import {
   VStack,
   Tabs,
   Table,
+  Box,
 } from "@chakra-ui/react"
 import { useState } from "react"
 import { GrView } from "react-icons/gr";
@@ -39,12 +40,12 @@ export const DetailsProductionOrder = ({ item }: ProductionOrderProps) => {
       onOpenChange={({ open }) => setIsOpen(open)}
     >
       <DialogTrigger asChild>
-        <Button variant="ghost">
+        <Button size="xs" colorPalette="gray" variant="ghost">
           <GrView fontSize="16px" />
           Detalles
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent maxH="90vh">
         <form>
           <DialogHeader>
             <DialogTitle>Orden de fabricación</DialogTitle>
@@ -130,7 +131,7 @@ export const DetailsProductionOrder = ({ item }: ProductionOrderProps) => {
                   {item?.date_start || ""}
                 </Text>
               </Field>
-              <Tabs.Root defaultValue="my-profile" variant="subtle">
+              <Tabs.Root defaultValue="work-order" variant="subtle">
                 <Tabs.List>
                     <Tabs.Trigger key="1" value="work-order">
                     Órdenes de trabajo
@@ -140,7 +141,8 @@ export const DetailsProductionOrder = ({ item }: ProductionOrderProps) => {
                     </Tabs.Trigger>
                 </Tabs.List>
                <Tabs.Content key="1" value="work-order">
-                    <Table.Root  size="sm" showColumnBorder>
+                <Box maxH="100px" overflowY="auto" borderWidth="1px" borderRadius="md">
+                    <Table.Root maxH="100px" size="sm" showColumnBorder>
                       <Table.Header>
                         <Table.Row>
                           <Table.ColumnHeader w="sm">Referencia</Table.ColumnHeader>
@@ -164,9 +166,11 @@ export const DetailsProductionOrder = ({ item }: ProductionOrderProps) => {
                         ))}
                       </Table.Body>
                     </Table.Root>
-                </Tabs.Content>
+                  </Box>
+                </Tabs.Content>                
                 <Tabs.Content key="2" value="list-components">
-                    <Table.Root  size="sm" showColumnBorder>
+                  <Box maxH="100px" overflowY="auto" borderWidth="1px" borderRadius="md">
+                    <Table.Root maxH="100px" size="sm" showColumnBorder>
                       <Table.Header>
                         <Table.Row>
                           <Table.ColumnHeader w="sm">Producto</Table.ColumnHeader>
@@ -186,6 +190,7 @@ export const DetailsProductionOrder = ({ item }: ProductionOrderProps) => {
                         ))}
                       </Table.Body>
                     </Table.Root>
+                  </Box>
                 </Tabs.Content>
               </Tabs.Root>
             </VStack>
