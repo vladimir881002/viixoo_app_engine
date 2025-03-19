@@ -81,11 +81,11 @@ function ProductionOrdensTable() {
       <Table.Root size={{ base: "sm", md: "md" }}>
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeader w="sm">Referencia</Table.ColumnHeader>
-            <Table.ColumnHeader w="sm">Inicio</Table.ColumnHeader>
-            <Table.ColumnHeader w="sm">Producto</Table.ColumnHeader>
-            <Table.ColumnHeader w="sm">Cantidad</Table.ColumnHeader>
-            <Table.ColumnHeader w="sm">Estado</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm" fontWeight="bold">Referencia</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm" fontWeight="bold">Inicio</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm" fontWeight="bold">Producto</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm" fontWeight="bold">Cantidad</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm" fontWeight="bold">Estado</Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>

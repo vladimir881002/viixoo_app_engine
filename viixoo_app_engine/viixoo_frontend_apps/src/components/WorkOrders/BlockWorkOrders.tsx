@@ -96,7 +96,7 @@ export const BlockWorkOrders = ({ item }: WorkOrderProps) => {
       onOpenChange={({ open }) => setIsOpen(open)}
     >
       <DialogTrigger asChild>
-      <Button size="xs" colorPalette="red" display={
+      <Button width="100%" variant="solid" size="md" colorPalette="red" display={
                   ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state == 'blocked'? 'none' : 'flex'
                 }>Bloquear</Button>
       </DialogTrigger>
@@ -107,7 +107,7 @@ export const BlockWorkOrders = ({ item }: WorkOrderProps) => {
             <DialogTitle>Bloquear Orden de trabajo</DialogTitle>
           </DialogHeader>
           <DialogBody>
-           <Field label="Motivo de pérdida">
+           <Field label="Motivo de pérdida:">
           <Select.Root required collection={reasons} size="sm" {...register("loss_id", blockRules())}>
             <Select.HiddenSelect />
             <Select.Control>
@@ -131,7 +131,7 @@ export const BlockWorkOrders = ({ item }: WorkOrderProps) => {
                 </Portal>
               </Select.Root>
               </Field>
-              <Field label="Descripción">
+              <Field label="Descripción:">
               <Textarea {...register("description")}/>
               </Field>
               <Input value={item.workorder_id} display='none' {...register("workorder_id")}
