@@ -2,7 +2,7 @@ import {
   Box,
   Container,
   Heading,
-  Text,
+  Input,
 } from "@chakra-ui/react"
 import { useForm } from "react-hook-form"
 
@@ -37,15 +37,12 @@ const UserInformation = () => {
         >
           <Field label="Nombre y apellidos:">
             {(
-              <Text
-                fontSize="md"
-                py={2}
-                color={!currentUser?.full_name ? "gray" : "inherit"}
-                truncate
-                maxW="sm"
-              >
-                {currentUser?.full_name || "N/A"}
-              </Text>
+               <Input
+                  id="full_name"
+                  type="text"
+                  defaultValue= {currentUser?.full_name || "N/A"}
+                >
+                </Input>
             )}
           </Field>
           <Field
@@ -55,9 +52,12 @@ const UserInformation = () => {
             errorText={errors.email?.message}
           >
             {(
-              <Text fontSize="md" py={2} truncate maxW="sm">
-                {currentUser?.email}
-              </Text>
+              <Input
+              id="email"
+              type="text"
+              defaultValue= {currentUser?.email || "N/A"}
+            >
+            </Input>
             )}
           </Field>          
         </Box>

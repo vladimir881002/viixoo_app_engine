@@ -6,6 +6,7 @@ import {
   Table,
   VStack,
   Button,
+  Group,
 } from "@chakra-ui/react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
@@ -19,12 +20,17 @@ import { type ApiError, type ChangeStateWorkOrder, WorkOrdersService } from "@/c
 import PendingWorkOrders from "@/components/Pending/PendingWorkOrders"
 import { DetailsWorkOrders } from "../../components/WorkOrders/DetailsWorkOrders"
 import { BlockWorkOrders } from "../../components/WorkOrders/BlockWorkOrders"
+import { MenuContent, MenuRoot, MenuTrigger } from "../../components/ui/menu"
+import { IconButton } from "@chakra-ui/react"
+import { BsThreeDotsVertical } from "react-icons/bs"
 import {
   PaginationItems,
   PaginationNextTrigger,
   PaginationPrevTrigger,
   PaginationRoot,
 } from "@/components/ui/pagination.tsx"
+import { useElapsedTime } from '../../hooks/elapsedTime';
+import type { WorkOrderPublic } from "../../client/types.gen"
 
 const itemsSearchSchema = z.object({
   page: z.number().catch(1),
@@ -44,6 +50,49 @@ export const Route = createFileRoute("/_layout/workorders")({
   component: WorkOrders,
   validateSearch: (search) => itemsSearchSchema.parse(search),
 })
+
+interface WorkOrderProps {
+  item: WorkOrderPublic
+}
+
+export const formatDuration = (duration: number): string => {
+  const minutes = Math.floor(duration);
+  const seconds = Math.round((duration % 1) * 60);
+  return `${minutes}:${seconds}`;
+};
+
+export const TimeElapsedWorkOrder = ( { item }: WorkOrderProps) => {
+  const activeTime = item.time_ids?.find(time => !time.date_end);
+
+  const date_start = activeTime?.date_start;
+  
+  const baseElapsed = useElapsedTime(date_start || "");
+  
+  const addFixedTime = (timeString: string) => {
+    if (!timeString) return "00:00";
+    
+    const [minutes, seconds] = timeString.split(":").map(Number);
+    const totalSeconds = (minutes * 60 + seconds);
+    
+    const durationMinutes = Math.floor(item.duration);
+    const durationSeconds = Math.round((item.duration % 1) * 60);
+
+    if (!timeString) return "00:00";
+
+    const itemTotalSeconds = (durationMinutes * 60) + durationSeconds;
+    
+    const newTotalSeconds = totalSeconds + itemTotalSeconds;
+    
+    const newMinutes = Math.floor(newTotalSeconds / 60);
+    const newSeconds = newTotalSeconds % 60;
+
+    return `${String(newMinutes).padStart(2, '0')}:${String(newSeconds).padStart(2, '0')}`;
+  };
+
+  if (!date_start) return <>00:00</>;
+
+  return <>{addFixedTime(baseElapsed)}</>;
+};
 
 function WorkOrdensTable() {
   const navigate = useNavigate({ from: Route.fullPath })
@@ -147,13 +196,14 @@ function WorkOrdensTable() {
   }
   return (
     <>
-      <Table.Root size={{ base: "sm", md: "md" }}>
+      <Table.Root size={{ base: "sm", md: "md" }} >
         <Table.Header>
           <Table.Row>
-          <Table.ColumnHeader w="sm">Operación</Table.ColumnHeader>
-          <Table.ColumnHeader w="sm">Producto</Table.ColumnHeader>
-          <Table.ColumnHeader w="sm">Cantidad a producir</Table.ColumnHeader>
-          <Table.ColumnHeader w="sm">Estado</Table.ColumnHeader>
+          <Table.ColumnHeader w="sm" fontWeight="bold">Operación</Table.ColumnHeader>
+          <Table.ColumnHeader w="sm" fontWeight="bold">Producto</Table.ColumnHeader>
+          <Table.ColumnHeader w="sm" fontWeight="bold">Cantidad a producir</Table.ColumnHeader>
+          <Table.ColumnHeader w="sm" fontWeight="bold">Duración real</Table.ColumnHeader>
+          <Table.ColumnHeader w="sm" fontWeight="bold">Estado</Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -169,34 +219,44 @@ function WorkOrdensTable() {
                 {item.qty_remaining}
               </Table.Cell>
               <Table.Cell truncate maxW="30%">
+                {(item.is_user_working)?<TimeElapsedWorkOrder item={item}/>:formatDuration(item.duration)}
+              </Table.Cell>
+              <Table.Cell truncate maxW="30%">
                 {item.state}
               </Table.Cell>
               <Table.Cell>
                 <DetailsWorkOrders item={item} />
               </Table.Cell>
               <Table.Cell>
+                <Group>
                 <Button size="xs" onClick={() => onClickStartWorkorder({'workorder_id': item.workorder_id})} colorPalette="green" display={
                   ['done', 'cancel'].includes(item.state) || ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state == 'blocked' || item.is_user_working? 'none' : 'flex'
                 }>Iniciar</Button>
-              </Table.Cell>
-              <Table.Cell>
-                <Button size="xs" onClick={() => onClickPauseWorkorder({'workorder_id': item.workorder_id})} colorPalette="orange" display={
-                  ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state == 'blocked' || !item.is_user_working? 'none' : 'flex'
-                }>Pausar</Button>
-              </Table.Cell>
-              <Table.Cell>
                 <Button size="xs" onClick={() => onClickFinishWorkorder({'workorder_id': item.workorder_id})} colorPalette="green" display={
                   ['draft', 'done'].includes(item.production_state) || item.working_state == 'blocked' || !item.is_user_working || item.quality_state != "" 
                     || ['register_consumed_materials', 'register_byproducts', 'instructions'].includes(item.test_type)? 'none' : 'flex'
                 }>Listo</Button>
+                </Group>
               </Table.Cell>
               <Table.Cell>
-                <BlockWorkOrders item={item} />                
-              </Table.Cell>
-              <Table.Cell>
-                <Button size="xs" onClick={() => onClickUnblockWorkorder({'workorder_id': item.workorder_id})} colorPalette="red" display={
-                  ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state != 'blocked'? 'none' : 'flex'
-                }>Desbloquear</Button>
+              <MenuRoot>
+                <MenuTrigger asChild>
+                  <IconButton variant="ghost" color="inherit">
+                    <BsThreeDotsVertical />
+                  </IconButton>
+                </MenuTrigger>
+                <MenuContent minWidth="200px" width="full">
+                <Button width="100%" variant="subtle" size="md" onClick={() => onClickPauseWorkorder({'workorder_id': item.workorder_id})} colorPalette="gray" display={
+                    ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state == 'blocked' || !item.is_user_working? 'none' : 'flex'
+                  }>Pausar</Button>
+                              
+                  <BlockWorkOrders item={item} />
+                  
+                  <Button width="100%" variant="solid" size="md" onClick={() => onClickUnblockWorkorder({'workorder_id': item.workorder_id})} colorPalette="red" display={
+                    ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state != 'blocked'? 'none' : 'flex'
+                  }>Desbloquear</Button>                
+                </MenuContent>
+              </MenuRoot>                
               </Table.Cell>
             </Table.Row>
           ))}
