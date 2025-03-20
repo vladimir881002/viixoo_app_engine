@@ -2,12 +2,12 @@ version: '3.8'
 
 
 networks:
-  viixoo-hemago_mrp:
+  viixoo-hemago-mrp:
     external: True
 
 services:
-  backend:
-    container_name: viixoo_hemago_backend
+  backend_dev:
+    container_name: viixoo_hemago_backend_dev
     build: 
       context: ./viixoo_core
       dockerfile: ./docker/dev.DockerFile
@@ -17,6 +17,27 @@ services:
         "-c",
         "pip install --upgrade debugpy -t /tmp && python /tmp/debugpy --listen 0.0.0.0:5679 --wait-for-client -m uvicorn viixoo_core.viixoo_core.app:app --host 0.0.0.0 --reload --port 8002",
       ]
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./viixoo_core:/app
+    healthcheck:
+       test: ["CMD", "curl", "-f", "http://localhost:8002/api/v1/utils/health-check/"]
+       interval: 10s
+       timeout: 5s
+       retries: 5
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: always
+    env_file:
+      - ./viixoo_core/docker/service.env
+
+  backend_prod:
+    container_name: viixoo_hemago_backend_prod
+    build: 
+      context: ./viixoo_core
+      dockerfile: ./docker/dev.DockerFile
+    command: ["uvicorn", "viixoo_core.viixoo_core.app:app", "--host", "0.0.0.0", "--reload", "--port", "8000"]
     ports:
       - "8000:8000"
     volumes:

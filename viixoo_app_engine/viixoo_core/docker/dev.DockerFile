@@ -29,6 +29,5 @@ RUN pip install --upgrade pip && \
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync
 
-EXPOSE 8000
+EXPOSE 8002
 
-CMD ["fastapi", "run", "--workers", "4", "viixoo_core/app.py"]
