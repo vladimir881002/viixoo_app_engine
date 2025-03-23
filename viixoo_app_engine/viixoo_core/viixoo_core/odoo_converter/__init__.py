@@ -1,7 +1,7 @@
 """
 This module contains the OdooConverter class which is used to convert Odoo models to Viixoo models.
 
-Convert Odoo models to Pydantic models. This script reads Odoo model definitions from a Python file 
+Convert Odoo models to Pydantic models. This script reads Odoo model definitions from a Python file
 and generates Pydantic models in a new Python file. The generated Pydantic models are based on the
 fields defined in the Odoo models. The script can process a single Python file or an entire directory
 
@@ -25,4 +25,4 @@ How to use this module:
         python converter.py -i './odoo/addons/base/models/res_partner.py' -o './converted_models'
 """
 
-from . import converter
+from . import converter  # noqa

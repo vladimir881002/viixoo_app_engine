@@ -1,4 +1,6 @@
-from unittest.mock import MagicMock, patch
+"""Tests for the get_postgresql_connection method in the Migration class."""
+
+from unittest.mock import MagicMock
 from psycopg2.sql import Identifier, SQL
 from viixoo_core.migrations import Migration
 import viixoo_core
@@ -6,13 +8,14 @@ import viixoo_core.migrations
 
 
 class TestMigrationGetPostgresqlConnection:
+    """Tests for the get_postgresql_connection method in the Migration class."""
 
     config = {
         "user": "test_user",
         "password": "test_password",
         "host": "test_host",
         "port": "test_port",
-        "dbname": "test_db"
+        "dbname": "test_db",
     }
 
     def test_get_postgresql_connection_new_db(self):
@@ -23,7 +26,7 @@ class TestMigrationGetPostgresqlConnection:
         mock_connect = viixoo_core.migrations.psycopg2.connect = MagicMock()
         mock_connection.cursor.return_value = mock_cursor
         mock_connect.return_value = mock_connection
-        
+
         mock_cursor.fetchone.return_value = None  # Database does not exist
 
         viixoo_core.migrations.config = self.config
@@ -35,8 +38,12 @@ class TestMigrationGetPostgresqlConnection:
         mock_connect.assert_called()
         assert conn == mock_connection
         assert mock_connection.autocommit is True
-        mock_cursor.execute.assert_any_call("SELECT 1 FROM pg_database WHERE datname = %s", ("test_db",))
-        mock_cursor.execute.assert_called_with(SQL("CREATE DATABASE {}").format(Identifier("test_db")))
+        mock_cursor.execute.assert_any_call(
+            "SELECT 1 FROM pg_database WHERE datname = %s", ("test_db",)
+        )
+        mock_cursor.execute.assert_called_with(
+            SQL("CREATE DATABASE {}").format(Identifier("test_db"))
+        )
         mock_cursor.close.assert_called_once()
         mock_connection.close.assert_called_once()
         assert mock_connect.call_count == 2
@@ -48,8 +55,10 @@ class TestMigrationGetPostgresqlConnection:
         mock_cursor = MagicMock()
         mock_connect = viixoo_core.migrations.psycopg2.connect = mock_connection
         mock_connection.cursor.return_value = mock_cursor
-        viixoo_core.migrations.db_connection = mock_connection.return_value = mock_connection
-        
+        viixoo_core.migrations.db_connection = mock_connection.return_value = (
+            mock_connection
+        )
+
         mock_cursor.fetchone.return_value = [1]  # Database exists
 
         viixoo_core.migrations.config = self.config
@@ -60,7 +69,9 @@ class TestMigrationGetPostgresqlConnection:
         mock_connect.assert_called()
         assert conn == mock_connection
         assert mock_connection.autocommit is True
-        mock_cursor.execute.assert_called_with("SELECT 1 FROM pg_database WHERE datname = %s", ("test_db",))
+        mock_cursor.execute.assert_called_with(
+            "SELECT 1 FROM pg_database WHERE datname = %s", ("test_db",)
+        )
         mock_cursor.execute.assert_called_once()
         mock_cursor.close.assert_called_once()
         mock_connection.close.assert_called_once()

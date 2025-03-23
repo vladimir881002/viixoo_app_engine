@@ -39,64 +39,68 @@ Here's a list of useful commands for working with the Viixoo App Engine:
 
 ### Managing the Virtual Environment
 
-*   **Create a virtual environment:**
+- **Create a virtual environment:**
 
-    ```bash
-    python -m venv env
-    ```
+  ```bash
+  python -m venv env
+  ```
 
-    *   **`python -m venv env`**: Creates a virtual environment named `env` in the current directory.
-*   **Activate the virtual environment (Linux/macOS):**
+  - **`python -m venv env`**: Creates a virtual environment named `env` in the current directory.
 
-    ```bash
-    source env/bin/activate
-    ```
+- **Activate the virtual environment (Linux/macOS):**
 
-    *   **`source env/bin/activate`**: Activates the virtual environment.
-*   **Activate the virtual environment (Windows):**
+  ```bash
+  source env/bin/activate
+  ```
 
-    ```bash
-    env\Scripts\activate
-    ```
+  - **`source env/bin/activate`**: Activates the virtual environment.
 
-    *   **`env\Scripts\activate`**: Activates the virtual environment.
+- **Activate the virtual environment (Windows):**
+
+  ```bash
+  env\Scripts\activate
+  ```
+
+  - **`env\Scripts\activate`**: Activates the virtual environment.
 
 ### Running the Application
 
-*   **Run the application with `uvicorn`:**
+- **Run the application with `uvicorn`:**
 
-    ```bash
-    uvicorn viixoo_core.app:app --reload
-    ```
+  ```bash
+  uvicorn viixoo_core.app:app --reload
+  ```
 
-    *   **`uvicorn`**: The command to run the Uvicorn server.
-    *   **`viixoo_core.app:app`**: The module (`viixoo_core.app`) and the FastAPI instance (`app`) to run.
-    *   **`--reload`**: Enables automatic reloading when code changes are detected.
+  - **`uvicorn`**: The command to run the Uvicorn server.
+  - **`viixoo_core.app:app`**: The module (`viixoo_core.app`) and the FastAPI instance (`app`) to run.
+  - **`--reload`**: Enables automatic reloading when code changes are detected.
 
-*   **Run the application using the shortcut:**
+- **Run the application using the shortcut:**
 
-    ```bash
-    viixoo_run
-    ```
+  ```bash
+  viixoo_run
+  ```
 
-    *   **`viixoo_run`**: If the package is installed in your environment, you can use this shortcut to run the application.
+  - **`viixoo_run`**: If the package is installed in your environment, you can use this shortcut to run the application.
 
 ### Managing Migrations
 
-* **Run all migrations**
-    ```bash
-    viixoo_migrate
-    ```
+- **Run all migrations**
 
-* **Convert Odoo models**
-    ```bash
-    viixoo_convert <path_to_python_odoo_model> <path_to_output>
-    ```
-    This command facilitates the conversion of Odoo models to valid Viixoo_core models. It provides a basic conversion, enabling faster migration when reusing Odoo models is a viable option.
+  ```bash
+  viixoo_migrate
+  ```
+
+- **Convert Odoo models**
+  ```bash
+  viixoo_convert <path_to_python_odoo_model> <path_to_output>
+  ```
+  This command facilitates the conversion of Odoo models to valid Viixoo_core models. It provides a basic conversion, enabling faster migration when reusing Odoo models is a viable option.
 
 ### 📂 Project Structure
 
 This project is organized into several key directories:
+
 ```
 viixoo_app_engine/
 ├── viixoo_core/                 # Framework Core
@@ -136,54 +140,53 @@ viixoo_app_engine/
 
 ### Core Components (`viixoo_core/`)
 
-*   **`__init__.py`:** Makes the `viixoo_core` directory a Python package.
-*   **`app.py`:** The main entry point for the FastAPI application. It handles route loading and configuration.
-*   **`routes/base_controller.py`:** Contains the `BaseController` class, which provides a foundation for creating specific controllers.
-*   **`services/base_services.py`:** Defines the `BaseService` class, the foundation for creating services.
-*   **`models/`:**  Directory with model classes:
-    *   **`__init__.py`**: makes models a python package
-    *   **`base.py`**: Defines the `BaseDBModel` class, the base for all database models.
-    *   **`postgres.py`**: Defines the `PostgresModel` class, the base for all postgres models.
-    *   **`domain.py`**: Translates a domain in to a SQL query.
-* **`config.py`**: load config from env vars or `.conf` file, the config file have to be located in app root folder
-* **`import_utils.py`**: load modules, and get all modules names. Helper functions to dynamic load modules.
-* **`migrations.py`**: Handles database migrations.
+- **`__init__.py`:** Makes the `viixoo_core` directory a Python package.
+- **`app.py`:** The main entry point for the FastAPI application. It handles route loading and configuration.
+- **`routes/base_controller.py`:** Contains the `BaseController` class, which provides a foundation for creating specific controllers.
+- **`services/base_services.py`:** Defines the `BaseService` class, the foundation for creating services.
+- **`models/`:** Directory with model classes:
+  - **`__init__.py`**: makes models a python package
+  - **`base.py`**: Defines the `BaseDBModel` class, the base for all database models.
+  - **`postgres.py`**: Defines the `PostgresModel` class, the base for all postgres models.
+  - **`domain.py`**: Translates a domain in to a SQL query.
+- **`config.py`**: load config from env vars or `.conf` file, the config file have to be located in app root folder
+- **`import_utils.py`**: load modules, and get all modules names. Helper functions to dynamic load modules.
+- **`migrations.py`**: Handles database migrations.
 
 ### Backend Modules (`viixoo_backend_apps/`)
 
-*   **`example/`:** An example of a backend module.
-    *   **`__init__.py`:** Makes the `example` directory a Python package.
-    *   **`models/`:**  Directory with model classes:
-        *   **`__init__.py`**: makes models a python package
-        *   **`example_model.py`**: A model example for the `example` module.
-    *   **`routes.py`:** Defines the API routes for this module.
-        *   **`__init__.py`**: makes models a python package
-        *   **`routes.py`**: A route example for the `example` module.
-    *   **`services/`:**  Directory with controller classes:
-        *   **`__init__.py`**: makes controllers a python package
-        *   **`example_service.py`**: A controller example for the `example` module.
+- **`example/`:** An example of a backend module.
+  - **`__init__.py`:** Makes the `example` directory a Python package.
+  - **`models/`:** Directory with model classes:
+    - **`__init__.py`**: makes models a python package
+    - **`example_model.py`**: A model example for the `example` module.
+  - **`routes.py`:** Defines the API routes for this module.
+    - **`__init__.py`**: makes models a python package
+    - **`routes.py`**: A route example for the `example` module.
+  - **`services/`:** Directory with controller classes:
+    - **`__init__.py`**: makes controllers a python package
+    - **`example_service.py`**: A controller example for the `example` module.
 
 ### General Files
 
-*   **`pyproject.toml`:** Used for packaging and installing the `viixoo_core` framework.
-*   **`requirements-dev.txt`:** Lists the development dependencies of the project.
-*   **`requirements.txt`:** Lists the dependencies of the project.
-*   **`README.md`:** This documentation file.
+- **`pyproject.toml`:** Used for packaging and installing the `viixoo_core` framework.
+- **`requirements-dev.txt`:** Lists the development dependencies of the project.
+- **`requirements.txt`:** Lists the dependencies of the project.
+- **`README.md`:** This documentation file.
 
 ## 🗂️ Explanation of Dependencies:
 
-*   **`fastapi`:** A fast and modern web framework for building APIs (the backend).
-*   **`uvicorn`:** A high-performance ASGI server, recommended for running FastAPI applications. Use: `uvicorn viixoo_core.app:app --reload`
-*   **`pydantic`:** A library for data validation and data model management.
-*   **`psycopg[binary]`:** A driver for connecting to PostgreSQL databases.
-*   **`Jinja2`:** A template engine used as the basis for QWeb templates.
-*   **`pytest`**: A test framework.
-*   **`pytest-cov`**: coverage plugin for pytest
+- **`fastapi`:** A fast and modern web framework for building APIs (the backend).
+- **`uvicorn`:** A high-performance ASGI server, recommended for running FastAPI applications. Use: `uvicorn viixoo_core.app:app --reload`
+- **`pydantic`:** A library for data validation and data model management.
+- **`psycopg[binary]`:** A driver for connecting to PostgreSQL databases.
+- **`Jinja2`:** A template engine used as the basis for QWeb templates.
+- **`pytest`**: A test framework.
+- **`pytest-cov`**: coverage plugin for pytest
 
 ## 🚀 Testing with Multiple Modules
 
 If you have the following modules:
-
 
 The framework automatically loads modules that have a `routes.py` file.
 
@@ -208,6 +211,7 @@ def register_routes(controller: BaseController):
 ```
 
 ## 🔥 How It Works
+
 When you start FastAPI (using uvicorn viixoo_core.app:app --reload), the framework performs these steps:
 
 Module Detection: Detects module with routes.py automatically.
@@ -231,60 +235,62 @@ FastAPI Integration: FastAPI registers these routes, so no changes are required 
     GET http://127.0.0.1:8000/example/1
 
     ```
-    {"id": 1, "name": "Example 1"}    
+    {"id": 1, "name": "Example 1"}
     ```
 
 ### Testing
 
-*   **Run all tests:**
+- **Run all tests:**
 
-    ```bash
-    pytest -v
+  ```bash
+  pytest -v
+  ```
+
+  - **`pytest`**: The command to run the `pytest` test runner.
+  - **`-v`**: Enables verbose output (shows more details).
+
+- **Run the tests of a specific class:**
+  ```bash
+  pytest -v tests/viixoo_core/test_app.py -k TestApp
+  ```
+  - **`pytest`**: The command to run the `pytest` test runner.
+  - **`-v`**: Enables verbose output (shows more details).
+  - **`tests/viixoo_core/test_app.py`**: The path to test file.
+  - **`-k TestApp`**: run only the tests of `TestApp` class.
+- **Run the tests of a specific method:**
+
+  ```bash
+  pytest -v tests/viixoo_core/test_app.py -k test_load_modules_success
+  ```
+
+  - **`pytest`**: The command to run the `pytest` test runner.
+  - **`-v`**: Enables verbose output (shows more details).
+  - **`tests/viixoo_core/test_app.py`**: The path to test file.
+  - **`-k test_load_modules_success`**: run only the test method `test_load_modules_success`.
+
+- **Run tests with coverage:**
+
+  ```bash
+  pytest -v --cov=viixoo_core --cov-report=term-missing --cov-report=xml:coverage.xml --junitxml=junit.xml tests/viixoo_core/
+  ```
+
+  - **`--cov=viixoo_core`**: Specifies that you want to measure coverage for the `viixoo_core` package.
+  - **`--cov-report=term-missing`**: Print missing lines in the terminal.
+  - **`--cov-report=xml:coverage.xml`**: Create a XML report file.
+  - **`--junitxml=junit.xml`**: Create a junit report file.
+  - **`tests/viixoo_core/`**: Specifies the folder where the test are.
+
+- **Run tests with specific python version:**
+  - The matrix of python version is defined in the `py_test.yml` file inside `github/workflows` folder.
+  - For example:
+    ```yaml
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
     ```
-
-    *   **`pytest`**: The command to run the `pytest` test runner.
-    *   **`-v`**: Enables verbose output (shows more details).
-
-* **Run the tests of a specific class:**
-    ```bash
-    pytest -v tests/viixoo_core/test_app.py -k TestApp
-    ```
-    *   **`pytest`**: The command to run the `pytest` test runner.
-    *   **`-v`**: Enables verbose output (shows more details).
-    *   **`tests/viixoo_core/test_app.py`**: The path to test file.
-    *   **`-k TestApp`**: run only the tests of `TestApp` class.
-* **Run the tests of a specific method:**
-    ```bash
-    pytest -v tests/viixoo_core/test_app.py -k test_load_modules_success
-    ```
-    *   **`pytest`**: The command to run the `pytest` test runner.
-    *   **`-v`**: Enables verbose output (shows more details).
-    *   **`tests/viixoo_core/test_app.py`**: The path to test file.
-    *   **`-k test_load_modules_success`**: run only the test method `test_load_modules_success`.
-
-*   **Run tests with coverage:**
-
-    ```bash
-    pytest -v --cov=viixoo_core --cov-report=term-missing --cov-report=xml:coverage.xml --junitxml=junit.xml tests/viixoo_core/
-    ```
-
-    *   **`--cov=viixoo_core`**: Specifies that you want to measure coverage for the `viixoo_core` package.
-    * **`--cov-report=term-missing`**: Print missing lines in the terminal.
-    * **`--cov-report=xml:coverage.xml`**: Create a XML report file.
-    * **`--junitxml=junit.xml`**: Create a junit report file.
-    *   **`tests/viixoo_core/`**: Specifies the folder where the test are.
-
-* **Run tests with specific python version:**
-     * The matrix of python version is defined in the `py_test.yml` file inside `github/workflows` folder.
-     * For example:
-        ```yaml
-        strategy:
-           matrix:
-              python-version: ["3.9", "3.10", "3.11"]
-        ```
-* **Run tests with codecov**
-    * This is configured in the `py_test.yml` file inside `github/workflows` folder.
-    * A token from `codecov` is needed.
+- **Run tests with codecov**
+  - This is configured in the `py_test.yml` file inside `github/workflows` folder.
+  - A token from `codecov` is needed.
 
 ## 🤝 Contributing
 

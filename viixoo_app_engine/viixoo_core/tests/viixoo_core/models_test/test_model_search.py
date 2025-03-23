@@ -1,20 +1,27 @@
+"""Tests for the search and search_load methods of the PostgresModel class."""
+
 from unittest.mock import patch
 from viixoo_core.models.postgres import PostgresModel
 from typing import Optional
 
 
 class MockPostgresModel(PostgresModel):
+    """A mock class for testing the search and search_load methods of the PostgresModel class."""
+
+    __db_name__ = "mock_db" ""
     __tablename__ = "mock_table"
 
-    
     id: int
     name: Optional[str] = None
     value: Optional[int] = 0
 
     def __init__(self, *args, **kwargs):
+        """Initialize the mock model."""
         super().__init__(*args, **kwargs)
 
+
 class TestPostgresModelSearch:
+    """Tests for the search method of the PostgresModel class."""
 
     @patch.object(PostgresModel, "query_select")
     def test_search_with_domain(self, mock_query_select):
@@ -51,13 +58,17 @@ class TestPostgresModelSearch:
 
 
 class TestPostgresModelSearchLoad:
+    """Tests for the search_load method of the PostgresModel class."""
 
     @patch.object(PostgresModel, "query_select")
     def test_search_load_with_domain(self, mock_query_select):
         """Test search_load method with a domain."""
         # Arrange
         mock_domain = [("name", "=", "Test")]
-        mock_query_results = [{"id": 1, "name": "Test", "value": 10}, {"id": 2, "name": "Test", "value": 20}]
+        mock_query_results = [
+            {"id": 1, "name": "Test", "value": 10},
+            {"id": 2, "name": "Test", "value": 20},
+        ]
         mock_query_select.return_value = mock_query_results
         model = MockPostgresModel(id=1)
 
@@ -80,7 +91,10 @@ class TestPostgresModelSearchLoad:
     def test_search_load_no_domain(self, mock_query_select):
         """Test search_load method with no domain."""
         # Arrange
-        mock_query_results = [{"id": 1, "name": "Test1", "value": 10}, {"id": 2, "name": "Test2", "value": 20}]
+        mock_query_results = [
+            {"id": 1, "name": "Test1", "value": 10},
+            {"id": 2, "name": "Test2", "value": 20},
+        ]
         mock_query_select.return_value = mock_query_results
         model = MockPostgresModel(id=1)
 

@@ -1,3 +1,3 @@
-from . import base
-from . import domain
-from . import postgres
+from . import base  # noqa
+from . import domain  # noqa
+from . import postgres  # noqa
