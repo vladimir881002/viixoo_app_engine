@@ -1,3 +1,5 @@
+"""Utility class to import modules dynamically."""
+
 import os
 import sys
 import pkgutil
@@ -12,12 +14,15 @@ if APPS_PATH_DEFINED:
 
 print(f"📂 APPS_PATH: {APPS_PATH}")
 
+
 class ImportUtils:
-    ### Finds all the modules in the APPS_PATH ###
+    """Utility class to import modules dynamically."""
+
+    # Finds all the modules in the APPS_PATH
 
     @classmethod
     def get_modules(cls) -> List[str]:
-        """Gets the application modules."""
+        """Get the application modules."""
         print("🔍 Searching for application modules...")
         modules = []
         print(f"📂 Searching in path: {APPS_PATH}")
@@ -25,10 +30,10 @@ class ImportUtils:
             modules.append(module_name)
             print(f"📦 Module found: {module_name}")
         return modules
-    
+
     @classmethod
     def import_module(cls, module_full_path: str, module_name: str) -> Any:
-        """Imports a module given its name."""
+        """Import a module given its name."""
         print(f"📦 Importing module: {module_full_path}")
         try:
             module = importlib.import_module(module_full_path)
@@ -37,10 +42,10 @@ class ImportUtils:
         except ImportError as e:
             print(f"❌ Error importing module '{module_name}': {e}")
             return None
-    
+
     @classmethod
     def import_module_from_path(cls, module_path: str) -> dict[str, Any]:
-        """Imports a module from the given path. Function to dynamically import a module given its full module_path
+        """Import a module from the given path. Function to dynamically import a module given its full module_path.
 
         Args:
             module_path: The path to the module directory.
@@ -54,11 +59,15 @@ class ImportUtils:
         try:
             for item in os.listdir(module_path):
                 item_path = os.path.join(module_path, item)
-                if os.path.isdir(item_path) and os.path.exists(os.path.join(item_path, "__init__.py")):  # Check for package
+                if os.path.isdir(item_path) and os.path.exists(
+                    os.path.join(item_path, "__init__.py")
+                ):  # Check for package
                     package_name = item  # The directory name is the package name
                     init_path = os.path.join(item_path, "__init__.py")
 
-                    spec = importlib.util.spec_from_file_location(package_name, init_path) # Important: use __init__.py
+                    spec = importlib.util.spec_from_file_location(
+                        package_name, init_path
+                    )  # Important: use __init__.py
                     if spec is None:
                         continue
 

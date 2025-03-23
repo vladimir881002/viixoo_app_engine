@@ -1,0 +1,1 @@
+"""Init Viixoo core package."""

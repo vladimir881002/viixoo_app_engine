@@ -1,80 +1,87 @@
+"""Add your docstring here."""
+
 from datetime import date
 from enum import Enum
 from pydantic import Field
 from typing import Any, ForwardRef, List, Optional
 from viixoo_core.models.postgres import PostgresModel
 
-FormatAddressMixinModel = ForwardRef('FormatAddressMixinModel')
-PartnerCategoryModel = ForwardRef('PartnerCategoryModel')
-PartnerTitleModel = ForwardRef('PartnerTitleModel')
-PartnerModel = ForwardRef('PartnerModel')
-ResPartnerIndustryModel = ForwardRef('ResPartnerIndustryModel')
+FormatAddressMixinModel = ForwardRef("FormatAddressMixinModel")
+PartnerCategoryModel = ForwardRef("PartnerCategoryModel")
+PartnerTitleModel = ForwardRef("PartnerTitleModel")
+PartnerModel = ForwardRef("PartnerModel")
+ResPartnerIndustryModel = ForwardRef("ResPartnerIndustryModel")
 
 
+class FormatAddressMixinModel(PostgresModel):  # noqa
+    """Address Format."""
 
-class FormatAddressMixinModel(PostgresModel):
-    """Address Format"""
     __description__ = "Address Format"
     __tablename__ = "format_address_mixin"
 
 
-
-
 class PartnerCategoryModel(PostgresModel):
-    """Partner Tags"""
+    """Partner Tags."""
+
     __description__ = "Partner Tags"
     __tablename__ = "res_partner_category"
     __order__ = "name"
 
-
     _complete_name: str
     name: str = Field(description="Tag Name")
-    color: Optional[int] = Field(description="Color", default_factory=PartnerCategoryModel._get_default_color)
-    parent_id: Optional[Optional[PartnerCategoryModel]] = Field(description="Parent Category")
-    child_ids: List[PartnerCategoryModel] = Field(description="Child Tags", default_factory=list)
+    color: Optional[int] = Field(
+        description="Color", default_factory=PartnerCategoryModel._get_default_color
+    )
+    parent_id: Optional[Optional[PartnerCategoryModel]] = Field(
+        description="Parent Category"
+    )
+    child_ids: List[PartnerCategoryModel] = Field(
+        description="Child Tags", default_factory=list
+    )
     active: Optional[bool]
     parent_path: Optional[str]
-    partner_ids: List[PartnerModel] = Field(description="Partners", default_factory=list)
-
+    partner_ids: List[PartnerModel] = Field(
+        description="Partners", default_factory=list
+    )
 
     @classmethod
     def _get_default_color(cls) -> int:
-        '''
-        TODO: Implement this default method
+        """TODO: Implement this default method.
+
         This is a placeholder for the original Odoo method: _get_default_color
-        '''
+        """
         # Original Odoo method name: _get_default_color
         # use as default for field color
         return None  # Replace with actual default value
-        
 
     class Config:
-        underscore_attrs_are_private = True
+        """Config."""
 
+        underscore_attrs_are_private = True
 
     @property
     def complete_name(self) -> str:
-        '''
-        Computed field from Odoo method: _compute_display_name
-        '''
-        pass
+        """Computed field from Odoo method: _compute_display_name."""
 
     @complete_name.setter
     def complete_name(self, value: str) -> None:
         self._complete_name = value
 
 
-class PartnerTitleModel(PostgresModel):
-    """Partner Title"""
+class PartnerTitleModel(PostgresModel):  # noqa
+    """Partner Title."""
+
     __description__ = "Partner Title"
     __tablename__ = "res_partner_title"
     __order__ = "name"
 
-
     name: str = Field(description="Title")
     shortcut: Optional[str] = Field(description="Abbreviation")
 
-class Partner_type_enum(str, Enum):
+
+class Partner_type_enum(str, Enum):  # noqa
+    """Partner Type."""
+
     CONTACT = "contact"  # Contact
     INVOICE = "invoice"  # Invoice Address
     DELIVERY = "delivery"  # Delivery Address
@@ -82,11 +89,11 @@ class Partner_type_enum(str, Enum):
 
 
 class PartnerModel(PostgresModel):
-    """Contact"""
+    """Contact."""
+
     __description__ = "Contact"
     __tablename__ = "res_partner"
     __order__ = "complete_name ASC, id DESC"
-
 
     name: Optional[str]
     _complete_name: str
@@ -104,7 +111,9 @@ class PartnerModel(PostgresModel):
     bank_ids: List[Any] = Field(description="Banks", default_factory=list)
     website: Optional[str]
     comment: Optional[str] = Field(description="Notes")
-    category_id: List[PartnerCategoryModel] = Field(description="Tags", default_factory=list)
+    category_id: List[PartnerCategoryModel] = Field(
+        description="Tags", default_factory=list
+    )
     active: Optional[bool]
     employee: Optional[bool]
     function: Optional[str] = Field(description="Job Position")
@@ -127,33 +136,31 @@ class PartnerModel(PostgresModel):
     color: Optional[int] = Field(description="Color Index")
     user_ids: List[Any] = Field(description="Users", default_factory=list)
     _partner_share: bool
-    _commercial_partner_id: Optional[PartnerModel] = Field(description="Commercial Entity")
+    _commercial_partner_id: Optional[PartnerModel] = Field(
+        description="Commercial Entity"
+    )
     _commercial_company_name: str
     company_name: Optional[str]
     barcode: Optional[str]
 
-
     @classmethod
     def _default_category(cls) -> Any:
-        '''
-        TODO: Implement this default method
+        """TODO: Implement this default method.
+
         This is a placeholder for the original Odoo method: _default_category
-        '''
+        """
         # Original Odoo method name: _default_category
         # use as default for field category_id
         return None  # Replace with actual default value
-        
 
     class Config:
-        underscore_attrs_are_private = True
+        """Config."""
 
+        underscore_attrs_are_private = True
 
     @property
     def complete_name(self) -> str:
-        '''
-        Computed field from Odoo method: _compute_complete_name
-        '''
-        pass
+        """Computed field from Odoo method: _compute_complete_name."""
 
     @complete_name.setter
     def complete_name(self, value: str) -> None:
@@ -161,24 +168,15 @@ class PartnerModel(PostgresModel):
 
     @property
     def active_lang_count(self) -> int:
-        '''
-        Computed field from Odoo method: _compute_active_lang_count
-        '''
-        pass
+        """Computed field from Odoo method: _compute_active_lang_count."""
 
     @property
     def tz_offset(self) -> str:
-        '''
-        Computed field from Odoo method: _compute_tz_offset
-        '''
-        pass
+        """Computed field from Odoo method: _compute_tz_offset."""
 
     @property
     def user_id(self) -> Optional[Any]:
-        '''
-        Computed field from Odoo method: _compute_user_id
-        '''
-        pass
+        """Computed field from Odoo method: _compute_user_id."""
 
     @user_id.setter
     def user_id(self, value: Optional[Any]) -> None:
@@ -186,24 +184,15 @@ class PartnerModel(PostgresModel):
 
     @property
     def same_vat_partner_id(self) -> Optional[PartnerModel]:
-        '''
-        Computed field from Odoo method: _compute_same_vat_partner_id
-        '''
-        pass
+        """Computed field from Odoo method: _compute_same_vat_partner_id."""
 
     @property
     def same_company_registry_partner_id(self) -> Optional[PartnerModel]:
-        '''
-        Computed field from Odoo method: _compute_same_vat_partner_id
-        '''
-        pass
+        """Computed field from Odoo method: _compute_same_vat_partner_id."""
 
     @property
     def company_registry(self) -> str:
-        '''
-        Computed field from Odoo method: _compute_company_registry
-        '''
-        pass
+        """Computed field from Odoo method: _compute_company_registry."""
 
     @company_registry.setter
     def company_registry(self, value: str) -> None:
@@ -211,31 +200,19 @@ class PartnerModel(PostgresModel):
 
     @property
     def email_formatted(self) -> str:
-        '''
-        Computed field from Odoo method: _compute_email_formatted
-        '''
-        pass
+        """Computed field from Odoo method: _compute_email_formatted."""
 
     @property
     def is_public(self) -> bool:
-        '''
-        Computed field from Odoo method: _compute_is_public
-        '''
-        pass
+        """Computed field from Odoo method: _compute_is_public."""
 
     @property
     def company_type(self) -> Any:
-        '''
-        Computed field from Odoo method: _compute_company_type
-        '''
-        pass
+        """Computed field from Odoo method: _compute_company_type."""
 
     @property
     def partner_share(self) -> bool:
-        '''
-        Computed field from Odoo method: _compute_partner_share
-        '''
-        pass
+        """Computed field from Odoo method: _compute_partner_share."""
 
     @partner_share.setter
     def partner_share(self, value: bool) -> None:
@@ -243,17 +220,11 @@ class PartnerModel(PostgresModel):
 
     @property
     def contact_address(self) -> str:
-        '''
-        Computed field from Odoo method: _compute_contact_address
-        '''
-        pass
+        """Computed field from Odoo method: _compute_contact_address."""
 
     @property
     def commercial_partner_id(self) -> Optional[PartnerModel]:
-        '''
-        Computed field from Odoo method: _compute_commercial_partner
-        '''
-        pass
+        """Computed field from Odoo method: _compute_commercial_partner."""
 
     @commercial_partner_id.setter
     def commercial_partner_id(self, value: Optional[PartnerModel]) -> None:
@@ -261,10 +232,7 @@ class PartnerModel(PostgresModel):
 
     @property
     def commercial_company_name(self) -> str:
-        '''
-        Computed field from Odoo method: _compute_commercial_company_name
-        '''
-        pass
+        """Computed field from Odoo method: _compute_commercial_company_name."""
 
     @commercial_company_name.setter
     def commercial_company_name(self, value: str) -> None:
@@ -272,26 +240,24 @@ class PartnerModel(PostgresModel):
 
     @property
     def self(self) -> Any:
-        '''
-        Computed field from Odoo method: _compute_get_ids
-        '''
-        pass
+        """Computed field from Odoo method: _compute_get_ids."""
 
 
 class ResPartnerIndustryModel(PostgresModel):
-    """Industry"""
+    """Industry."""
+
     __description__ = "Industry"
     __tablename__ = "res_partner_industry"
     __order__ = "name"
-
 
     name: Optional[str]
     full_name: Optional[str]
     active: Optional[bool]
 
+
 # Update forward references
-FormatAddressMixinModel.update_forward_refs()
-PartnerCategoryModel.update_forward_refs()
-PartnerTitleModel.update_forward_refs()
-PartnerModel.update_forward_refs()
-ResPartnerIndustryModel.update_forward_refs()
+FormatAddressMixinModel.update_forward_refs()  # noqa
+PartnerCategoryModel.update_forward_refs()  # noqa
+PartnerTitleModel.update_forward_refs()  # noqa
+PartnerModel.update_forward_refs()  # noqa
+ResPartnerIndustryModel.update_forward_refs()  # noqa

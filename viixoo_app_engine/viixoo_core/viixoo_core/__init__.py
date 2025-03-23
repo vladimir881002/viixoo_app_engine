@@ -1,2 +1,1 @@
-from . import models
-# from . import odoo_converter
+from . import models  # noqa

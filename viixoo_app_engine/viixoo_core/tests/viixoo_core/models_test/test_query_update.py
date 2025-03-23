@@ -1,12 +1,15 @@
+"""Test the query_update method of the PostgresModel class."""
+
 import pytest
 from unittest.mock import MagicMock, patch
-from psycopg2.sql import SQL, Identifier, Placeholder
 from viixoo_core.models.postgres import PostgresModel
 from viixoo_core.models.domain import DomainTranslator
 from typing import Optional
 
 
 class MockPostgresModel(PostgresModel):
+    """Mock PostgresModel class for testing."""
+
     __tablename__ = "mock_table"
 
     id: int
@@ -14,10 +17,12 @@ class MockPostgresModel(PostgresModel):
     value: Optional[int] = 0
 
     def __init__(self, *args, **kwargs):
+        """Initialize the mock model."""
         super().__init__(*args, **kwargs)
 
 
 class TestPostgresModelQueryUpdate:
+    """Test the query_update method of the PostgresModel class."""
 
     @patch.object(PostgresModel, "get_connection")
     @patch.object(DomainTranslator, "translate")
@@ -75,7 +80,7 @@ class TestPostgresModelQueryUpdate:
         mock_translate.assert_called_once_with(mock_domain)
         mock_cursor.execute.assert_called_once()
         assert results == mock_result
-        
+
     @patch.object(PostgresModel, "get_connection")
     @patch.object(DomainTranslator, "translate")
     def test_query_update_error(self, mock_translate, mock_get_connection):

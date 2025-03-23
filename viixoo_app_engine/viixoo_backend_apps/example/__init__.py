@@ -1,3 +1,3 @@
-from . import models
-from . import services
-from . import routes
+from . import models  # noqa
+from . import services  # noqa
+from . import routes  # noqa
