@@ -17,12 +17,12 @@ app = FastAPI(title="An app powered by Viixoo App Engine. 🚀")
 origins_str = os.getenv("ALLOWED_ORIGINS", "")
 origins = origins_str.split(",") if origins_str else []
 app.add_middleware(
-        CORSMiddleware,
-        allow_origins=origins,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 router = APIRouter()
 controller = BaseController(router)

@@ -6,14 +6,15 @@ The frontend is built with [Vite](https://vitejs.dev/), [React](https://reactjs.
 
 Before you begin, ensure that you have either the Node Version Manager (nvm) or Fast Node Manager (fnm) installed on your system.
 
-* To install fnm follow the [official fnm guide](https://github.com/Schniz/fnm#installation). If you prefer nvm, you can install it using the [official nvm guide](https://github.com/nvm-sh/nvm#installing-and-updating).
+- To install fnm follow the [official fnm guide](https://github.com/Schniz/fnm#installation). If you prefer nvm, you can install it using the [official nvm guide](https://github.com/nvm-sh/nvm#installing-and-updating).
 
-* After installing either nvm or fnm, proceed to the `frontend` directory:
+- After installing either nvm or fnm, proceed to the `frontend` directory:
 
 ```bash
 cd frontend
 ```
-* If the Node.js version specified in the `.nvmrc` file isn't installed on your system, you can install it using the appropriate command:
+
+- If the Node.js version specified in the `.nvmrc` file isn't installed on your system, you can install it using the appropriate command:
 
 ```bash
 # If using fnm
@@ -23,7 +24,7 @@ fnm install
 nvm install
 ```
 
-* Once the installation is complete, switch to the installed version:
+- Once the installation is complete, switch to the installed version:
 
 ```bash
 # If using fnm
@@ -33,16 +34,16 @@ fnm use
 nvm use
 ```
 
-* Within the `frontend` directory, install the necessary NPM packages:
+- Within the `frontend` directory, install the necessary NPM packages:
 
 ```bash
 npm install
 ```
 
-* And start the live server with the following `npm` script:
+- And start the live server with the following `npm` script:
 
 ```bash
 npm run dev
 ```
 
-* Then open your browser at http://localhost:5173/.
+- Then open your browser at http://localhost:5173/.
