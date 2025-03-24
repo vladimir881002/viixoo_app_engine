@@ -36,7 +36,7 @@ services:
     container_name: viixoo_hemago_backend_prod
     build: 
       context: ./viixoo_core
-      dockerfile: ./docker/dev.DockerFile
+      dockerfile: ./docker/prod.DockerFile
     command: ["uvicorn", "viixoo_core.viixoo_core.app:app", "--host", "0.0.0.0", "--reload", "--port", "8000"]
     ports:
       - "8000:8000"
