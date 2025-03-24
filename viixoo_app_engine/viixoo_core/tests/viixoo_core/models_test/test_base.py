@@ -1,10 +1,13 @@
+"""Test the BaseDBModel class."""
+
 import pytest
-from unittest.mock import MagicMock, patch
 from viixoo_core.models.base import BaseDBModel
 from typing import List, Dict, Any
 
 
 class TestBaseDBModel:
+    """Test the BaseDBModel class."""
+
     def test_base_db_model_is_abstract(self):
         """Test that BaseDBModel is abstract and cannot be instantiated."""
         with pytest.raises(TypeError):
@@ -40,26 +43,28 @@ class TestBaseDBModel:
         assert getattr(BaseDBModel, "delete").__isabstractmethod__
         assert getattr(BaseDBModel, "search").__isabstractmethod__
         assert getattr(BaseDBModel, "search_load").__isabstractmethod__
-    
+
     def test_base_db_model_cannot_be_instantiated(self):
         """Test that the abstract methods cannot be instanced."""
 
         class ConcreteModel(BaseDBModel):
             __tablename__ = "test_table"
             __description__ = "test_description"
-            __order__ = 'id'
+            __order__ = "id"
 
             def get_connection(self):
-              pass
+                pass
 
-            def query_select(self, columns: List[str] = False, domain: List[Any] = []) -> List[Dict]:
-              pass
+            def query_select(
+                self, columns: List[str] = False, domain: List[Any] = []
+            ) -> List[Dict]:
+                pass
 
             def query_insert(self, rows: List[Dict]) -> List[Dict]:
-              pass
+                pass
 
             def query_update(self, rows, domain):
-              pass
+                pass
 
             def query_delete(self, domain):
                 pass
@@ -67,7 +72,7 @@ class TestBaseDBModel:
             def write(self, rows: List[Dict]):
                 pass
 
-            def create(self, rows: List[Dict]):    
+            def create(self, rows: List[Dict]):
                 pass
 
             def delete(self, domain: List[Any]):

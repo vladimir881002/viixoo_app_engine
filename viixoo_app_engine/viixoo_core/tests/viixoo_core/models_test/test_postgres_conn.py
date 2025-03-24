@@ -1,19 +1,22 @@
+"""Tests for the PostgresModel class."""
+
 import pytest
 from unittest.mock import MagicMock, patch
 import viixoo_core
 from viixoo_core.models.postgres import PostgresModel
-from viixoo_core.models.domain import DomainTranslator
 from viixoo_core.config import BaseConfig
-from psycopg2.sql import SQL, Identifier
 import importlib
 
 
 class TestPostgresModelGetConnection:
+    """Test the get_connection method of the PostgresModel class."""
 
     @patch.object(BaseConfig, "get_config")
     @patch("psycopg2.connect")
     @patch.object(importlib, "import_module")
-    def test_get_connection_new_connection(self, mock_import_module, mock_psycopg2_connect, mock_get_config):
+    def test_get_connection_new_connection(
+        self, mock_import_module, mock_psycopg2_connect, mock_get_config
+    ):
         """Test get_connection when a new connection is required."""
         # Arrange
         mock_config = {
@@ -21,7 +24,7 @@ class TestPostgresModelGetConnection:
             "user": "test_user",
             "password": "test_password",
             "host": "test_host",
-            "port": 5432
+            "port": 5432,
         }
         mock_get_config.return_value = mock_config
 
@@ -43,9 +46,7 @@ class TestPostgresModelGetConnection:
         assert connection == mock_connection
         mock_import_module.assert_called_once_with("test_module")
         mock_get_config.assert_called_once_with(base_path="/test/path", module="models")
-        mock_psycopg2_connect.assert_called_once_with(
-            **mock_config
-        )
+        mock_psycopg2_connect.assert_called_once_with(**mock_config)
 
         # Clean up
         viixoo_core.models.postgres.db_connection = False
@@ -72,7 +73,9 @@ class TestPostgresModelGetConnection:
     @patch.object(BaseConfig, "get_config")
     @patch("psycopg2.connect")
     @patch.object(importlib, "import_module")
-    def test_get_connection_existing_connection_closed(self, mock_import_module, mock_psycopg2_connect, mock_get_config):
+    def test_get_connection_existing_connection_closed(
+        self, mock_import_module, mock_psycopg2_connect, mock_get_config
+    ):
         """Test get_connection when an existing connection is available but closed."""
         # Arrange
         mock_config = {
@@ -80,7 +83,7 @@ class TestPostgresModelGetConnection:
             "user": "test_user",
             "password": "test_password",
             "host": "test_host",
-            "port": 5432
+            "port": 5432,
         }
         mock_get_config.return_value = mock_config
 
@@ -109,7 +112,9 @@ class TestPostgresModelGetConnection:
     @patch.object(BaseConfig, "get_config")
     @patch("psycopg2.connect")
     @patch.object(importlib, "import_module")
-    def test_get_connection_error(self, mock_import_module, mock_psycopg2_connect, mock_get_config):
+    def test_get_connection_error(
+        self, mock_import_module, mock_psycopg2_connect, mock_get_config
+    ):
         """Test get_connection error."""
         # Arrange
         mock_get_config.side_effect = Exception("Some error")

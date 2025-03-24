@@ -1,15 +1,22 @@
+"""Tests for the delete method in the PostgresModel class."""
+
 import pytest
 from unittest.mock import patch
 from viixoo_core.models.postgres import PostgresModel
 
 
 class MockPostgresModel(PostgresModel):
+    """Mock PostgresModel class for testing."""
+
     __tablename__ = "mock_table"
+
     def __init__(self, *args, **kwargs):
+        """Initialize the mock model."""
         super().__init__(*args, **kwargs)
 
 
 class TestPostgresModelDelete:
+    """Test the delete method of the PostgresModel class."""
 
     @patch.object(PostgresModel, "query_delete")
     def test_delete_success(self, mock_query_delete):

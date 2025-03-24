@@ -1,3 +1,5 @@
+"""Main FastAPI application."""
+
 from fastapi import FastAPI, APIRouter, Request
 from viixoo_core.routes.base_controller import BaseController
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -25,8 +27,10 @@ app.add_middleware(
 router = APIRouter()
 controller = BaseController(router)
 
+
 # Cargar dinámicamente todos los módulos dentro de viixoo_backend_apps
 def load_modules():
+    """Load all modules in the APPS_PATH directory."""
     print(f"📂 Loading modules in path: {APPS_PATH}")
     try:
         modules = ImportUtils.import_module_from_path(APPS_PATH)
@@ -42,26 +46,35 @@ def load_modules():
         print(f"❌ Error loading modules: {e}")
         return
 
+
 # Llamar a la función para cargar los módulos dinámicamente
 load_modules()
 
 # dynamic register routers
 app.include_router(router)
 
+
 @app.get(f"{API_PREFIX}/healthcheck")
 async def healthcheck():
+    """Healthcheck endpoint."""
     return "OK"
+
 
 @app.get("/", include_in_schema=False)
 async def home():
+    """Home endpoint.Automatically redirects to the API documentation."""
     return RedirectResponse(f"{API_PREFIX}/docs")
+
 
 @app.get("/v1", include_in_schema=False)
 async def v1():
+    """Home endpoint. Automatically redirects to the API documentation."""
     return RedirectResponse(f"{API_PREFIX}/docs")
+
 
 @app.get(f"{API_PREFIX}/docs", include_in_schema=False)
 async def swagger_ui_html(request: Request) -> HTMLResponse:
+    """Swagger UI HTML endpoint."""
     root_path = request.scope.get("root_path", "").rstrip("/")
     openapi_url = root_path + app.openapi_url
     oauth2_redirect_url = app.swagger_ui_oauth2_redirect_url
@@ -76,9 +89,14 @@ async def swagger_ui_html(request: Request) -> HTMLResponse:
         swagger_ui_parameters=app.swagger_ui_parameters,
     )
 
+
 def run_app():
+    """Run the FastAPI application."""
     import uvicorn
+
     uvicorn.run("viixoo_core.app:app", host="0.0.0.0", port=8000)
 
+
 if __name__ == "__main__":
+    """Run the FastAPI application."""
     run_app()

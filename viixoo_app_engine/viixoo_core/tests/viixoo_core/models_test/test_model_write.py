@@ -1,15 +1,22 @@
+"""Test cases for the write method in the PostgresModel class."""
+
 import pytest
 from unittest.mock import patch
 from viixoo_core.models.postgres import PostgresModel
 
 
 class MockPostgresModel(PostgresModel):
+    """Mock PostgresModel class for testing."""
+
     __tablename__ = "mock_table"
+
     def __init__(self, *args, **kwargs):
+        """Initialize the mock model."""
         super().__init__(*args, **kwargs)
 
 
 class TestPostgresModelWrite:
+    """Test the write method of the PostgresModel class."""
 
     @patch.object(PostgresModel, "query_update")
     def test_write_with_rows_and_domain(self, mock_query_update):
@@ -44,7 +51,6 @@ class TestPostgresModelWrite:
         """Test write method with rows and no domain."""
         # Arrange
         mock_rows = [{"name": "Updated Test 1", "value": 20}]
-        mock_domain = [('id', '=', 1)]
         mock_result = [{"id": 1}]
         mock_query_update.return_value = mock_result
 

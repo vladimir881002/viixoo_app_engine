@@ -1,3 +1,5 @@
+"""Example module, Show how to register routes."""
+
 from viixoo_core.routes.base_controller import BaseController
 from ..services.example_service import ExampleService
 
@@ -9,5 +11,6 @@ def register_routes(controller: BaseController):
     controller.add_route("/example", service.get_all_examples, methods=["GET"])
     controller.add_route("/example/{id}", service.get_example, methods=["GET"])
     controller.add_route("/example", service.create_examples, methods=["POST"])
+
 
 register_routes = register_routes

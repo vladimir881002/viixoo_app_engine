@@ -1,3 +1,5 @@
+"""Test config.py."""
+
 import pytest
 from unittest.mock import patch, mock_open
 import os
@@ -5,8 +7,9 @@ from viixoo_core.config import BaseConfig
 
 
 class TestBaseConfig:
+    """Test BaseConfig class."""
 
-    @patch.dict('os.environ', clear=True)
+    @patch.dict("os.environ", clear=True)
     def test_from_env(self):
         """Test from_env method."""
         # Arrange
@@ -28,7 +31,7 @@ class TestBaseConfig:
         assert config["host"] == "test_host"
         assert config["port"] == 1234
 
-    @patch.dict('os.environ', clear=True)
+    @patch.dict("os.environ", clear=True)
     def test_from_env_defaults(self):
         """Test from_env method with default values."""
         # Act
@@ -42,7 +45,11 @@ class TestBaseConfig:
         assert config["host"] == "localhost"
         assert config["port"] == 5432
 
-    @patch("builtins.open", new_callable=mock_open, read_data="[database]\ndb_type=postgresql\ndbname=test_db\nuser=test_user\npassword=test_password\nhost=test_host\nport=1234")
+    @patch(
+        "builtins.open",
+        new_callable=mock_open,
+        read_data="[database]\ndb_type=postgresql\ndbname=test_db\nuser=test_user\npassword=test_password\nhost=test_host\nport=1234",
+    )
     @patch("os.path.exists")
     def test_from_file_success(self, mock_exists, mock_open):
         """Test from_file method with a valid file."""
@@ -58,7 +65,7 @@ class TestBaseConfig:
         assert config["user"] == "test_user"
         assert config["password"] == "test_password"
         assert config["host"] == "test_host"
-        assert config["port"] == 1234        
+        assert config["port"] == 1234
 
     @patch("os.path.exists")
     def test_from_file_not_found(self, mock_exists):
@@ -75,11 +82,27 @@ class TestBaseConfig:
     @patch.object(BaseConfig, "from_file")
     @patch("os.path.join")
     @patch("os.path.exists")
-    def test_get_config_from_env(self, mock_exists, mock_join, mock_from_file, mock_from_env, capsys):
+    def test_get_config_from_env(
+        self, mock_exists, mock_join, mock_from_file, mock_from_env, capsys
+    ):
         """Test get_config method with environment variables."""
         # Arrange
-        mock_from_env.return_value = {"db_type": "sqlite", "dbname": "env_db", "user": "env_user", "password": "env_password", "host": "env_host", "port": 1111}
-        mock_from_file.return_value = {"db_type": "postgresql", "dbname": "file_db", "user": "file_user", "password": "file_password", "host": "file_host", "port": 2222}
+        mock_from_env.return_value = {
+            "db_type": "sqlite",
+            "dbname": "env_db",
+            "user": "env_user",
+            "password": "env_password",
+            "host": "env_host",
+            "port": 1111,
+        }
+        mock_from_file.return_value = {
+            "db_type": "postgresql",
+            "dbname": "file_db",
+            "user": "file_user",
+            "password": "file_password",
+            "host": "file_host",
+            "port": 2222,
+        }
         mock_join.return_value = "/test/path/test_module/test_module.conf"
         mock_exists.return_value = True
 
@@ -91,17 +114,40 @@ class TestBaseConfig:
         mock_from_file.assert_not_called()
         mock_join.assert_not_called()
         mock_exists.assert_not_called()
-        assert config == {"db_type": "sqlite", "dbname": "env_db", "user": "env_user", "password": "env_password", "host": "env_host", "port": 1111}
+        assert config == {
+            "db_type": "sqlite",
+            "dbname": "env_db",
+            "user": "env_user",
+            "password": "env_password",
+            "host": "env_host",
+            "port": 1111,
+        }
 
     @patch.object(BaseConfig, "from_env")
     @patch.object(BaseConfig, "from_file")
     @patch("os.path.join")
     @patch("os.path.exists")
-    def test_get_config_from_file(self, mock_exists, mock_join, mock_from_file, mock_from_env, capsys):
+    def test_get_config_from_file(
+        self, mock_exists, mock_join, mock_from_file, mock_from_env, capsys
+    ):
         """Test get_config method with a .conf file."""
         # Arrange
-        mock_from_env.return_value = {"db_type": False, "dbname": "env_db", "user": "env_user", "password": "env_password", "host": "env_host", "port": 1111}
-        mock_from_file.return_value = {"db_type": "postgresql", "dbname": "file_db", "user": "file_user", "password": "file_password", "host": "file_host", "port": 2222}
+        mock_from_env.return_value = {
+            "db_type": False,
+            "dbname": "env_db",
+            "user": "env_user",
+            "password": "env_password",
+            "host": "env_host",
+            "port": 1111,
+        }
+        mock_from_file.return_value = {
+            "db_type": "postgresql",
+            "dbname": "file_db",
+            "user": "file_user",
+            "password": "file_password",
+            "host": "file_host",
+            "port": 2222,
+        }
         mock_join.return_value = "/test/path/test_module/test_module.conf"
         mock_exists.return_value = True
 
@@ -111,8 +157,21 @@ class TestBaseConfig:
 
         # Assert
         mock_from_env.assert_called_once_with(module="test_module")
-        mock_from_file.assert_called_once_with("/test/path/test_module/test_module.conf")
-        mock_join.assert_called_once_with("/test/path", "test_module", "test_module.conf")
-        assert config == {"db_type": "postgresql", "dbname": "file_db", "user": "file_user", "password": "file_password", "host": "file_host", "port": 2222}
-        assert "📂 Config from file: /test/path/test_module/test_module.conf" in captured.out
-
+        mock_from_file.assert_called_once_with(
+            "/test/path/test_module/test_module.conf"
+        )
+        mock_join.assert_called_once_with(
+            "/test/path", "test_module", "test_module.conf"
+        )
+        assert config == {
+            "db_type": "postgresql",
+            "dbname": "file_db",
+            "user": "file_user",
+            "password": "file_password",
+            "host": "file_host",
+            "port": 2222,
+        }
+        assert (
+            "📂 Config from file: /test/path/test_module/test_module.conf"
+            in captured.out
+        )
