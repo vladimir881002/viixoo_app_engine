@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10"] # Add or remove Python versions as needed
+        python-version: ["3.10", "3.12"] # Add or remove Python versions as needed
 
     steps:
       - name: Checkout code
