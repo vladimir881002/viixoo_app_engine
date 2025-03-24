@@ -56,6 +56,8 @@ interface WorkOrderProps {
 }
 
 export const formatDuration = (duration: number): string => {
+  if (duration == 0) return "00:00";
+
   const minutes = Math.floor(duration);
   const seconds = Math.round((duration % 1) * 60);
   return `${minutes}:${seconds}`;
@@ -230,10 +232,10 @@ function WorkOrdensTable() {
               <Table.Cell>
                 <Group>
                 <Button size="xs" onClick={() => onClickStartWorkorder({'workorder_id': item.workorder_id})} colorPalette="green" display={
-                  ['done', 'cancel'].includes(item.state) || ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state == 'blocked' || item.is_user_working? 'none' : 'flex'
+                  ['done', 'cancel'].includes(item.state_value) || ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state == 'blocked' || item.is_user_working? 'none' : 'flex'
                 }>Iniciar</Button>
                 <Button size="xs" onClick={() => onClickFinishWorkorder({'workorder_id': item.workorder_id})} colorPalette="green" display={
-                  ['draft', 'done'].includes(item.production_state) || item.working_state == 'blocked' || !item.is_user_working || item.quality_state != "" 
+                  ['draft', 'done'].includes(item.production_state) || item.working_state == 'blocked' || !item.is_user_working || (item.quality_state != "" && item.quality_state != "none")
                     || ['register_consumed_materials', 'register_byproducts', 'instructions'].includes(item.test_type)? 'none' : 'flex'
                 }>Listo</Button>
                 </Group>
