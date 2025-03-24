@@ -1,6 +1,5 @@
 import { Container, Image, Input} from "@chakra-ui/react"
 import {
-  Link as RouterLink,
   createFileRoute,
   redirect,
 } from "@tanstack/react-router"
