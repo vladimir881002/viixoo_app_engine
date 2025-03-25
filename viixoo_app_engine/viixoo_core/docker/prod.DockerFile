@@ -19,9 +19,9 @@ COPY ./viixoo_core /viixoo_core/app
 
 COPY requirements-dev.txt .
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir --upgrade -r requirements-dev.txt
+    pip install --no-cache-dir --upgrade -r requirements.txt
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync
 
-EXPOSE 8002
+EXPOSE 8000
 
