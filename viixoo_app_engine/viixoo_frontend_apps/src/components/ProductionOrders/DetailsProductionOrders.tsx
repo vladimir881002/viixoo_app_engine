@@ -30,7 +30,7 @@ interface ProductionOrderProps {
 }
 
 export const DetailsProductionOrder = ({ item }: ProductionOrderProps) => {
-  const [isOpen, setIsOpen] = useState(false) 
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
     <DialogRoot
@@ -59,6 +59,7 @@ export const DetailsProductionOrder = ({ item }: ProductionOrderProps) => {
                     id="name"
                     type="text"
                     defaultValue={item?.name || ""}
+                    readOnly
                   >
                   </Input>
               </Field>
@@ -70,6 +71,7 @@ export const DetailsProductionOrder = ({ item }: ProductionOrderProps) => {
                     id="product"
                     type="text"
                     defaultValue={item?.product || ""}
+                    readOnly
                   >
                   </Input>
               </Field>
@@ -80,18 +82,13 @@ export const DetailsProductionOrder = ({ item }: ProductionOrderProps) => {
                     id="product_qty"
                     type="text"
                     defaultValue={item?.product_qty || ""}
+                    readOnly
                   >
                   </Input>
               </Field>
               <Field
                 label="Lista de materiales:"
               >
-                <Input
-                    id="bom"
-                    type="text"
-                    defaultValue={item?.bom || ""}
-                  >
-                  </Input>
               </Field>
               <Field
                 label="Fecha inicio:"
@@ -100,6 +97,7 @@ export const DetailsProductionOrder = ({ item }: ProductionOrderProps) => {
                     id="date_start"
                     type="text"
                     defaultValue={item?.date_start || ""}
+                    readOnly
                   >
                   </Input>
               </Field>
@@ -110,9 +108,10 @@ export const DetailsProductionOrder = ({ item }: ProductionOrderProps) => {
                     id="date_finished"
                     type="text"
                     defaultValue={item?.date_finished || ""}
+                    readOnly
                   >
                   </Input>
-                
+
               </Field>
               <Tabs.Root defaultValue="work-order" variant="subtle">
                 <Tabs.List>
@@ -150,14 +149,14 @@ export const DetailsProductionOrder = ({ item }: ProductionOrderProps) => {
                       </Table.Body>
                     </Table.Root>
                   </Box>
-                </Tabs.Content>                
+                </Tabs.Content>
                 <Tabs.Content key="2" value="list-components">
                   <Box maxH="100px" overflowY="auto" borderWidth="1px" borderRadius="md">
                     <Table.Root maxH="100px" size="sm" showColumnBorder>
                       <Table.Header>
                         <Table.Row>
-                          <Table.ColumnHeader w="sm">Producto</Table.ColumnHeader>
-                          <Table.ColumnHeader w="sm">Cantidad</Table.ColumnHeader>
+                          <Table.ColumnHeader fontWeight="bold" w="sm">Producto</Table.ColumnHeader>
+                          <Table.ColumnHeader fontWeight="bold" w="sm">Cantidad</Table.ColumnHeader>
                         </Table.Row>
                       </Table.Header>
                       <Table.Body>

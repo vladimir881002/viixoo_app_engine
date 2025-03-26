@@ -67,7 +67,7 @@ function Login() {
       >
         <Image
           src={Logo}
-          alt="FastAPI logo"
+          alt="Hemago logo"
           height="auto"
           maxW="2xs"
           alignSelf="center"

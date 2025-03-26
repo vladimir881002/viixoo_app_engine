@@ -53,7 +53,7 @@ export const Body_login_login_access_tokenSchema = {
   type: "object",
   required: ["username", "password"],
   title: "Body_login-login_access_token",
-} as const
+} as const;
 
 export const HTTPValidationErrorSchema = {
   properties: {
@@ -67,7 +67,7 @@ export const HTTPValidationErrorSchema = {
   },
   type: "object",
   title: "HTTPValidationError",
-} as const
+} as const;
 
 export const MessageSchema = {
   properties: {
@@ -79,7 +79,7 @@ export const MessageSchema = {
   type: "object",
   required: ["message"],
   title: "Message",
-} as const
+} as const;
 
 export const NewPasswordSchema = {
   properties: {
@@ -97,7 +97,7 @@ export const NewPasswordSchema = {
   type: "object",
   required: ["token", "new_password"],
   title: "NewPassword",
-} as const
+} as const;
 
 export const TokenSchema = {
   properties: {
@@ -114,7 +114,7 @@ export const TokenSchema = {
   type: "object",
   required: ["access_token"],
   title: "Token",
-} as const
+} as const;
 
 export const UpdatePasswordSchema = {
   properties: {
@@ -134,4 +134,4 @@ export const UpdatePasswordSchema = {
   type: "object",
   required: ["current_password", "new_password"],
   title: "UpdatePassword",
-} as const
+} as const;

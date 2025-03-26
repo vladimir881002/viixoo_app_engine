@@ -25,7 +25,7 @@ const PendingWorkOrders = () => (
           </Table.Cell>
           <Table.Cell>
             <SkeletonText noOfLines={1} />
-          </Table.Cell>         
+          </Table.Cell>
         </Table.Row>
       ))}
     </Table.Body>

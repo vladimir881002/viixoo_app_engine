@@ -41,6 +41,7 @@ const UserInformation = () => {
                   id="full_name"
                   type="text"
                   defaultValue= {currentUser?.full_name || "N/A"}
+                  readOnly
                 >
                 </Input>
             )}
@@ -56,10 +57,11 @@ const UserInformation = () => {
               id="email"
               type="text"
               defaultValue= {currentUser?.email || "N/A"}
+              readOnly
             >
             </Input>
             )}
-          </Field>          
+          </Field>
         </Box>
       </Container>
     </>

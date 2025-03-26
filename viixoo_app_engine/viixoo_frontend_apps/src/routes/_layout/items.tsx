@@ -53,7 +53,7 @@ function ProductionOrdensTable() {
     navigate({
       search: (prev: { [key: string]: string }) => ({ ...prev, page }),
     })
-  
+
   const items = data?.data.slice(0, PER_PAGE) ?? []
   const count = data?.count ?? 0
 

@@ -20,6 +20,8 @@ import { type ApiError, type ChangeStateWorkOrder, WorkOrdersService } from "@/c
 import PendingWorkOrders from "@/components/Pending/PendingWorkOrders"
 import { DetailsWorkOrders } from "../../components/WorkOrders/DetailsWorkOrders"
 import { BlockWorkOrders } from "../../components/WorkOrders/BlockWorkOrders"
+import { AddComponentsWorkOrders } from "../../components/WorkOrders/AddComponentsWorkOrders"
+import { ConsumeComponentsWorkOrders } from "../../components/WorkOrders/ConsumeComponentsWorkOrders"
 import { MenuContent, MenuRoot, MenuTrigger } from "../../components/ui/menu"
 import { IconButton } from "@chakra-ui/react"
 import { BsThreeDotsVertical } from "react-icons/bs"
@@ -67,24 +69,24 @@ export const TimeElapsedWorkOrder = ( { item }: WorkOrderProps) => {
   const activeTime = item.time_ids?.find(time => !time.date_end);
 
   const date_start = activeTime?.date_start;
-  
+
   const baseElapsed = useElapsedTime(date_start || "");
-  
+
   const addFixedTime = (timeString: string) => {
     if (!timeString) return "00:00";
-    
+
     const [minutes, seconds] = timeString.split(":").map(Number);
     const totalSeconds = (minutes * 60 + seconds);
-    
+
     const durationMinutes = Math.floor(item.duration);
     const durationSeconds = Math.round((item.duration % 1) * 60);
 
     if (!timeString) return "00:00";
 
     const itemTotalSeconds = (durationMinutes * 60) + durationSeconds;
-    
+
     const newTotalSeconds = totalSeconds + itemTotalSeconds;
-    
+
     const newMinutes = Math.floor(newTotalSeconds / 60);
     const newSeconds = newTotalSeconds % 60;
 
@@ -109,10 +111,10 @@ function WorkOrdensTable() {
     navigate({
       search: (prev: { [key: string]: string }) => ({ ...prev, page }),
     })
-  
+
   const items = data?.data.slice(0, PER_PAGE) ?? []
   const count = data?.count ?? 0
-  const queryClient = useQueryClient()  
+  const queryClient = useQueryClient()
   const { showSuccessToast } = useCustomToast()
   const mutationStartWorkorder = useMutation({
     mutationFn: (data: ChangeStateWorkOrder) =>
@@ -196,6 +198,7 @@ function WorkOrdensTable() {
       </EmptyState.Root>
     )
   }
+
   return (
     <>
       <Table.Root size={{ base: "sm", md: "md" }} >
@@ -248,17 +251,19 @@ function WorkOrdensTable() {
                   </IconButton>
                 </MenuTrigger>
                 <MenuContent minWidth="200px" width="full">
+                <ConsumeComponentsWorkOrders item={item} />
+                <AddComponentsWorkOrders item={item} />
                 <Button width="100%" variant="subtle" size="md" onClick={() => onClickPauseWorkorder({'workorder_id': item.workorder_id})} colorPalette="gray" display={
                     ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state == 'blocked' || !item.is_user_working? 'none' : 'flex'
                   }>Pausar</Button>
-                              
+
                   <BlockWorkOrders item={item} />
-                  
+
                   <Button width="100%" variant="solid" size="md" onClick={() => onClickUnblockWorkorder({'workorder_id': item.workorder_id})} colorPalette="red" display={
                     ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state != 'blocked'? 'none' : 'flex'
-                  }>Desbloquear</Button>                
+                  }>Desbloquear</Button>
                 </MenuContent>
-              </MenuRoot>                
+              </MenuRoot>
               </Table.Cell>
             </Table.Row>
           ))}

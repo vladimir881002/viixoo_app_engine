@@ -16,11 +16,11 @@ const UserMenu = () => {
   return (
     <>
       {/* Desktop */}
-      <Text color="black">{user?.full_name || "Usuario"}</Text>
-      <Flex>      
+      <Text color="ui.main" fontWeight="bold">{user?.full_name || "Usuario"}</Text>
+      <Flex>
         <MenuRoot>
           <MenuTrigger asChild p={2}>
-            
+
             <Button data-testid="user-menu"
               variant="solid"
               maxW="sm"
@@ -29,7 +29,7 @@ const UserMenu = () => {
               justifyContent="center"
               alignItems="center"
               padding={2}>
-              <FaUserCheck fontSize="18" />              
+              <FaUserCheck fontSize="18" />
             </Button>
           </MenuTrigger>
 

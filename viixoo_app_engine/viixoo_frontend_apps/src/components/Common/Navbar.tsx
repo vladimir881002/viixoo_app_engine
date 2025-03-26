@@ -16,11 +16,12 @@ function Navbar() {
       align="center"
       bg="bg.muted"
       w="100%"
+      h="80px"
       top={0}
       p={4}
     >
       <Link to="/">
-        <Image src={Logo} alt="Logo" maxW="3xs" p={2} />
+        <Image src={Logo} alt="Logo" maxW="70%" p={2} />
       </Link>
       <Flex gap={2} alignItems="center">
         <UserMenu />
