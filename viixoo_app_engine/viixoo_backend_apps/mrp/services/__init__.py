@@ -1,1 +1,1 @@
-from . import mrp_service
+from . import mrp_service  # noqa
