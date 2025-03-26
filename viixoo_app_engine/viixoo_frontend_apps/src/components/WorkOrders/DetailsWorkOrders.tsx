@@ -2,11 +2,12 @@ import {
   Button,
   ButtonGroup,
   DialogActionTrigger,
-  Text,
+  Textarea,
   VStack,
   Tabs,
   Table,
   Box,
+  Input,
 } from "@chakra-ui/react"
 import { useState } from "react"
 import { GrView } from "react-icons/gr";
@@ -23,15 +24,31 @@ import {
   DialogTrigger,
 } from "../ui/dialog"
 import { Field } from "../ui/field"
+import { useElapsedTime } from '../../hooks/elapsedTime';
 
 
 interface WorkOrderProps {
   item: WorkOrderPublic
 }
 
+interface TimeEmployeePublicProps {
+  date_start: string
+}
+
+export const TimeElapsed = ( { date_start }: TimeEmployeePublicProps) => {
+  const elapsed = useElapsedTime(date_start);
+  return <>{elapsed}</>;
+};
+
 export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
   const [isOpen, setIsOpen] = useState(false) 
 
+  const formatDurationTime = (duration: number): string => {
+    const minutes = Math.floor(duration);
+    const seconds = Math.round((duration % 1) * 60);
+    return `${minutes}:${seconds}`;
+  };
+  
   return (
     <DialogRoot
       size={{ base: "xs", md: "md" }}
@@ -52,96 +69,55 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
           <DialogBody>
             <VStack gap={4}>
               <Field
-                label="Operación"
+                label="Operación:"
               >
-                <Text
-                  fontSize="md"
-                  py={2}
-                  color="inherit"
-                  truncate
-                  maxW="sm"
+                <Input
+                  id="name"
+                  type="text"
+                  defaultValue={item?.name || ""}
                 >
-                  {item?.name || ""}
-                </Text>
+                </Input>
               </Field>
               <Field
-                label="Centro de trabajo"
+                label="Centro de trabajo:"
               >
-                <Text
-                  fontSize="md"
-                  py={2}
-                  color="inherit"
-                  truncate
-                  maxW="sm"
+                <Input
+                  id="workcenter"
+                  type="text"
+                  defaultValue={item?.workcenter || ""}
                 >
-                  {item?.workcenter || ""}
-                </Text>
+                </Input>
               </Field>
 
               <Field
-                label="Producto"
+                label="Producto:"
               >
-                <Text
-                  fontSize="md"
-                  py={2}
-                  color="inherit"
-                  truncate
-                  maxW="sm"
+                <Input
+                  id="product"
+                  type="text"
+                  defaultValue={item?.product || ""}
                 >
-                  {item?.product || ""}
-                </Text>
-              </Field>
+                </Input>
+              </Field>   
               <Field
-                label="Cantidad a producir"
+                label="Cantidad a producir:"
               >
-                <Text
-                  fontSize="md"
-                  py={2}
-                  color="inherit"
-                  truncate
-                  maxW="sm"
+                <Input
+                  id="qty_remaining"
+                  type="text"
+                  defaultValue={item?.qty_remaining || ""}
                 >
-                  {item?.qty_remaining || ""}
-                </Text>
-              </Field>
+                </Input>
+              </Field>           
               <Field
-                label="Duración esperada"
+                label="Estado:"
               >
-                <Text
-                  fontSize="md"
-                  py={2}
-                  color="inherit"
-                  truncate
-                  maxW="sm"
+                <Input
+                  id="duration_expected"
+                  type="text"
+                  defaultValue={item?.state || ""}
                 >
-                  {item?.duration_expected || ""}
-                </Text>
-              </Field>
-              <Field
-                label="Duración real"
-              >
-                <Text
-                  fontSize="md"
-                  py={2}
-                  color="inherit"
-                  truncate
-                  maxW="sm"
-                >
-                  {item?.duration || ""}
-                </Text>
-              </Field>
-              <Field
-                label="Estado"
-              >
-                <Text
-                  fontSize="md"
-                  py={2}
-                  color="inherit"
-                  truncate
-                  maxW="sm"
-                >
-                  {item?.state || ""}
-                </Text>
+                </Input>
               </Field>
               <Tabs.Root defaultValue="tab-work-order-time" variant="subtle">
                 <Tabs.List>
@@ -150,6 +126,9 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                     </Tabs.Trigger>
                     <Tabs.Trigger key="2" value="tab-instructions">
                     Instrucciones
+                    </Tabs.Trigger>
+                    <Tabs.Trigger key="3" value="tab-others">
+                    Otra información
                     </Tabs.Trigger>
                 </Tabs.List>
                <Tabs.Content key="1" value="tab-work-order-time">
@@ -170,7 +149,7 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                               {time.employee}
                             </Table.Cell>
                             <Table.Cell truncate maxW="sm">
-                              {time.duration}
+                              {(time.date_end)?formatDurationTime(time.duration): <TimeElapsed date_start={time.date_start}/>}
                             </Table.Cell>
                             <Table.Cell truncate maxW="30%">
                               {time.date_start}
@@ -186,31 +165,46 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                 </Tabs.Content>
                 <Tabs.Content key="2" value="tab-instructions">
                     <Field
-                    label="URL con las instrucciones"
+                    label="URL con las instrucciones:"
                   >
-                    <Text
-                      fontSize="md"
-                      py={2}
-                      color="inherit"
-                      truncate
-                      maxW="sm"
-                    >
-                      {item?.url_document_instructions || ""}
-                    </Text>
+                     <Input
+                        id="url_document_instructions"
+                        type="text"
+                        defaultValue={item?.url_document_instructions || ""}
+                      >
+                      </Input>
                   </Field>
                   <Field
-                    label="URL de los diseños en 3D de los planos"
+                    label="URL de los diseños en 3D de los planos:"
                   >
-                    <Text
-                      fontSize="md"
-                      py={2}
-                      color="inherit"
-                      truncate
-                      maxW="sm"
-                    >
-                      URL de los diseños en 3D de los planos:{item?.urls_plans || ""}
-                    </Text>
+                    <Textarea
+                        id="urls_plans"
+                        defaultValue={item?.urls_plans || ""}
+                      >
+                      </Textarea>
                   </Field>
+                  </Tabs.Content>
+                  <Tabs.Content key="3" value="tab-others">                  
+              <Field
+                label="Duración esperada:"
+              >
+                <Input
+                  id="duration_expected"
+                  type="text"
+                  defaultValue={(item.duration_expected)?formatDurationTime(item.duration_expected):""}
+                >
+                </Input>
+              </Field>
+              <Field
+                label="Duración real:"
+              >
+                 <Input
+                  id="duration"
+                  type="text"
+                  defaultValue={(item.duration)?formatDurationTime(item.duration):""}
+                >
+                </Input>
+              </Field>
                 </Tabs.Content>
               </Tabs.Root>
             </VStack>

@@ -40,6 +40,7 @@ class WorkOrder(BaseModel):
     duration_expected: float
     duration: float | None
     state: str
+    state_value: str
     date_start: str
     date_finished: str | None
     url_document_instructions: str | None

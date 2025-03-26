@@ -17,7 +17,7 @@ COPY ./pyproject.toml /viixoo_core/
 COPY ./viixoo_core /viixoo_core/app
 
 
-COPY requirements-dev.txt .
+COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir --upgrade -r requirements.txt
 

@@ -2,9 +2,9 @@ import {
   Button,
   ButtonGroup,
   DialogActionTrigger,
-  Text,
   VStack,
   Tabs,
+  Input,
   Table,
   Box,
 } from "@chakra-ui/react"
@@ -45,7 +45,7 @@ export const DetailsProductionOrder = ({ item }: ProductionOrderProps) => {
           Detalles
         </Button>
       </DialogTrigger>
-      <DialogContent maxH="90vh">
+      <DialogContent>
         <form>
           <DialogHeader>
             <DialogTitle>Orden de fabricación</DialogTitle>
@@ -53,83 +53,66 @@ export const DetailsProductionOrder = ({ item }: ProductionOrderProps) => {
           <DialogBody>
             <VStack gap={4}>
               <Field
-                label="Referencia"
+                label="Referencia:"
               >
-                <Text
-                  fontSize="md"
-                  py={2}
-                  color="inherit"
-                  truncate
-                  maxW="sm"
-                >
-                  {item?.name || ""}
-                </Text>
+                 <Input
+                    id="name"
+                    type="text"
+                    defaultValue={item?.name || ""}
+                  >
+                  </Input>
               </Field>
 
               <Field
-                label="Producto"
+                label="Producto:"
               >
-                <Text
-                  fontSize="md"
-                  py={2}
-                  color="inherit"
-                  truncate
-                  maxW="sm"
-                >
-                  {item?.product || ""}
-                </Text>
+                <Input
+                    id="product"
+                    type="text"
+                    defaultValue={item?.product || ""}
+                  >
+                  </Input>
               </Field>
               <Field
-                label="Cantidad"
+                label="Cantidad:"
               >
-                <Text
-                  fontSize="md"
-                  py={2}
-                  color="inherit"
-                  truncate
-                  maxW="sm"
-                >
-                  {item?.product_qty || ""}
-                </Text>
+                <Input
+                    id="product_qty"
+                    type="text"
+                    defaultValue={item?.product_qty || ""}
+                  >
+                  </Input>
               </Field>
               <Field
-                label="Lista de materiales"
+                label="Lista de materiales:"
               >
-                <Text
-                  fontSize="md"
-                  py={2}
-                  color="inherit"
-                  truncate
-                  maxW="sm"
-                >
-                  {item?.bom || ""}
-                </Text>
+                <Input
+                    id="bom"
+                    type="text"
+                    defaultValue={item?.bom || ""}
+                  >
+                  </Input>
               </Field>
               <Field
-                label="Fecha inicio"
+                label="Fecha inicio:"
               >
-                <Text
-                  fontSize="md"
-                  py={2}
-                  color="inherit"
-                  truncate
-                  maxW="sm"
-                >
-                  {item?.date_start || ""}
-                </Text>
+                <Input
+                    id="date_start"
+                    type="text"
+                    defaultValue={item?.date_start || ""}
+                  >
+                  </Input>
               </Field>
               <Field
-                label="Fecha fin"
+                label="Fecha fin:"
               >
-                <Text
-                  fontSize="md"
-                  py={2}
-                  color="inherit"
-                  truncate
-                  maxW="sm"
-                >
-                  {item?.date_start || ""}
-                </Text>
+                 <Input
+                    id="date_finished"
+                    type="text"
+                    defaultValue={item?.date_finished || ""}
+                  >
+                  </Input>
+                
               </Field>
               <Tabs.Root defaultValue="work-order" variant="subtle">
                 <Tabs.List>

@@ -1,8 +1,11 @@
+"""Test the load_model method of the PostgresModel class."""
+
 from unittest.mock import patch
 from viixoo_core.models.postgres import PostgresModel
 
 
 class TestPostgresModelLoadModel:
+    """Test the load_model method of the PostgresModel class."""
 
     @patch.object(PostgresModel, "query_select")
     def test_load_model(self, mock_query_select):

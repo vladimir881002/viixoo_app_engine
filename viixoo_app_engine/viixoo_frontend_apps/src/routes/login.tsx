@@ -1,6 +1,5 @@
 import { Container, Image, Input} from "@chakra-ui/react"
 import {
-  Link as RouterLink,
   createFileRoute,
   redirect,
 } from "@tanstack/react-router"
@@ -97,9 +96,9 @@ function Login() {
           placeholder="Contraseña"
           errors={errors}
         />
-        <RouterLink to="/recover-password" className="main-link">
+        {/* <RouterLink to="/recover-password" className="main-link">
           ¿Olvidaste tu contraseña?
-        </RouterLink>
+        </RouterLink> */}
         <Button variant="solid" type="submit" loading={isSubmitting} size="md">
           Iniciar sesión
         </Button>

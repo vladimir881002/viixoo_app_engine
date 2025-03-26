@@ -1,19 +1,23 @@
+"""Tests for the query_delete method in the PostgresModel class."""
+
 import pytest
 from unittest.mock import MagicMock, patch
-import psycopg2
-from psycopg2.extras import RealDictCursor
-from psycopg2.sql import SQL, Identifier
 from viixoo_core.models.postgres import PostgresModel
-from viixoo_core.models.base import BaseDBModel
 from viixoo_core.models.domain import DomainTranslator
-from typing import List, Dict, Any
+
 
 class MockPostgresModel(PostgresModel):
+    """Mock PostgresModel class for testing."""
+
     __tablename__ = "mock_table"
+
     def __init__(self, *args, **kwargs):
+        """Initialize the mock model."""
         super().__init__(*args, **kwargs)
 
+
 class TestPostgresModelQueryDelete:
+    """Test the query_delete method of the PostgresModel class."""
 
     @patch.object(PostgresModel, "get_connection")
     @patch.object(DomainTranslator, "translate")

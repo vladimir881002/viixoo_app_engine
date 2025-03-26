@@ -40,7 +40,8 @@ export type WorkOrderPublic = {
   duration_expected: number
   duration: number
   state: string
-  date_start: string | null
+  state_value: string
+  date_start: string
   date_finished: string | null
   url_document_instructions: string | null
   urls_plans: string | null
