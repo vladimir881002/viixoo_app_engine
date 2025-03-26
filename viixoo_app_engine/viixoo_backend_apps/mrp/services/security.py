@@ -17,7 +17,7 @@ SECRET_KEY: str = secrets.token_urlsafe(32)
 
 def create_access_token(subject: str | Any, expires_delta: timedelta) -> str:
     """
-    Creates a JWT access token for the given subject.
+    Create a JWT access token for the given subject.
 
     :param subject: The subject of the token (e.g., a user ID).
     :param expires_delta: The token's expiration time.
