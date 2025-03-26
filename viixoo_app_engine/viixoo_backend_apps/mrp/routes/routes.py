@@ -7,7 +7,7 @@ service = MrpService()
 
 
 def register_routes(controller: BaseController):
-    """Registers the routes specific to the 'mrp' module."""
+    """Register the routes specific to the 'mrp' module."""
     controller.add_route(
         "/login/access-token", service.authenticate_user, methods=["POST"]
     )
