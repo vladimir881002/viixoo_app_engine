@@ -31,6 +31,8 @@ services:
     restart: always
     env_file:
       - ./viixoo_core/docker/service.env
+    networks:
+      - viixoo-hemago-mrp
 
   backend_prod:
     container_name: viixoo_hemago_backend_prod
@@ -47,6 +49,8 @@ services:
     restart: always
     env_file:
       - ./viixoo_core/docker/service.env
+    networks:
+      - viixoo-hemago-mrp
 
   frontend:
     container_name: viixoo_hemago_frontend
@@ -61,4 +65,6 @@ services:
       args:
         - VITE_API_URL=${VITE_API_URL:-https://api.default.com}
         - NODE_ENV=production
+    networks:
+      - viixoo-hemago-mrp
 
