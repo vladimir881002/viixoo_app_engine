@@ -17,7 +17,7 @@ class TestMrpEndpoints(unittest.TestCase):
     """Test class for MRP service endpoints."""
 
     def setUp(self):
-        """Sets initial data for testing."""
+        """Set initial data for testing."""
         self.valid_token = security.create_access_token(
             1, expires_delta=timedelta(minutes=600)
         )
