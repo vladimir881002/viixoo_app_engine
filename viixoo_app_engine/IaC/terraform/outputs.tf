@@ -12,6 +12,11 @@ output "instance_public_dns" {
   description = "Public DNS of the EC2 instance"
 }
 
+output "instance_id" {
+  value       = aws_instance.app_server.id
+  description = "ID of the EC2 instance"
+}
+
 #output "eip_address" {
 #  value       = aws_eip.app_eip.public_ip
 #  description = "Elastic IP address"
