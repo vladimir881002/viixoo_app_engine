@@ -44,7 +44,7 @@ function getWorkOrdersQueryOptions({ page }: { page: number }) {
   return {
     queryFn: () =>
       WorkOrdersService.readWorkOrders({ skip: (page - 1) * PER_PAGE, limit: PER_PAGE }),
-    queryKey: ["items", { page }],
+    queryKey: ["workorders", { page }],
   }
 }
 
@@ -121,7 +121,7 @@ function WorkOrdensTable() {
       WorkOrdersService.startWorkorder({ requestBody: data }),
     onSuccess: () => {
       showSuccessToast("Orden iniciada satisfactoriamente.")
-      queryClient.invalidateQueries({ queryKey: ["items"] })
+      queryClient.invalidateQueries({ queryKey: ["workorders"] })
     },
     onError: (err: ApiError) => {
       handleError(err)
@@ -137,7 +137,7 @@ function WorkOrdensTable() {
       WorkOrdersService.pauseWorkorder({ requestBody: data }),
     onSuccess: () => {
       showSuccessToast("Orden pausada satisfactoriamente.")
-      queryClient.invalidateQueries({ queryKey: ["items"] })
+      queryClient.invalidateQueries({ queryKey: ["workorders"] })
     },
     onError: (err: ApiError) => {
       handleError(err)
@@ -153,7 +153,7 @@ function WorkOrdensTable() {
       WorkOrdersService.finishWorkorder({ requestBody: data }),
     onSuccess: () => {
       showSuccessToast("Orden terminada satisfactoriamente.")
-      queryClient.invalidateQueries({ queryKey: ["items"] })
+      queryClient.invalidateQueries({ queryKey: ["workorders"] })
     },
     onError: (err: ApiError) => {
       handleError(err)
@@ -169,7 +169,7 @@ function WorkOrdensTable() {
       WorkOrdersService.unblockWorkorder({ requestBody: data }),
     onSuccess: () => {
       showSuccessToast("Orden desbloqueada satisfactoriamente.")
-      queryClient.invalidateQueries({ queryKey: ["items"] })
+      queryClient.invalidateQueries({ queryKey: ["workorders"] })
     },
     onError: (err: ApiError) => {
       handleError(err)

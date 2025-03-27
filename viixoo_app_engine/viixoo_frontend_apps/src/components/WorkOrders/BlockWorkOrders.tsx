@@ -59,7 +59,7 @@ export const BlockWorkOrders = ({ item }: WorkOrderProps) => {
     return {
       queryFn: () =>
         WorkOrdersService.readReasonsLoss(),
-      queryKey: ["items"],
+      queryKey: ["reasons"],
     }
   }
   const { data } = useQuery({
@@ -76,7 +76,7 @@ export const BlockWorkOrders = ({ item }: WorkOrderProps) => {
       mutationFn: (data: BlockWorkOrder) =>
         WorkOrdersService.blockWorkorder({ requestBody: data }),
       onSuccess: () => {
-        showSuccessToast("Orden bloquada satisfactoriamente.")
+        showSuccessToast("Orden bloqueada satisfactoriamente.")
         queryClient.invalidateQueries({ queryKey: ["items"] })
         reset()
       },
