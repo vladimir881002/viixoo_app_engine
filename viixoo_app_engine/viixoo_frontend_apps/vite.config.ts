@@ -11,4 +11,10 @@ export default defineConfig({
     },
   },
   plugins: [react(), TanStackRouterVite()],
+  build: {
+    sourcemap: true,
+  },
+  css: {
+    devSourcemap: true,
+  },
 })
