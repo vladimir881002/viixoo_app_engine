@@ -598,7 +598,7 @@ class Migration:
 
                 if default and existing_columns[column].get("default") != default:
                     cursor.execute(
-                        f"ALTER TABLE {table_name} ALTER COLUMN {column} SET DEFAULT '{default}'::{ existing_columns[column].get('type')};"
+                        f"ALTER TABLE {table_name} ALTER COLUMN {column} SET DEFAULT '{default}'::{existing_columns[column].get('type')};"
                     )
                     cls.log_change(
                         "ALTER COLUMN",
