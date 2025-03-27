@@ -19,4 +19,3 @@ RUN cd /viixoo_app_engine/viixoo_core/ && \
 RUN cd /viixoo_app_engine/viixoo_backend_apps/mrp/ && pip install --no-cache-dir --upgrade -r requirements.txt
 
 EXPOSE 8000
-
