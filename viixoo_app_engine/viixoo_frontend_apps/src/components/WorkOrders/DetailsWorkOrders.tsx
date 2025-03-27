@@ -176,6 +176,7 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                         id="url_document_instructions"
                         type="text"
                         defaultValue={item?.url_document_instructions || ""}
+                        readOnly
                       >
                       </Input>
                   </Field>
@@ -185,6 +186,7 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                     <Textarea
                         id="urls_plans"
                         defaultValue={item?.urls_plans || ""}
+                        readOnly
                       >
                       </Textarea>
                   </Field>
@@ -197,6 +199,7 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                   id="duration_expected"
                   type="text"
                   defaultValue={(item.duration_expected)?formatDurationTime(item.duration_expected):""}
+                  readOnly
                 >
                 </Input>
               </Field>
@@ -207,6 +210,7 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                   id="duration"
                   type="text"
                   defaultValue={(item.duration)?formatDurationTime(item.duration):""}
+                  readOnly
                 >
                 </Input>
               </Field>

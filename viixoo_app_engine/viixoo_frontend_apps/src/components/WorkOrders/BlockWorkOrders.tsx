@@ -96,7 +96,7 @@ export const BlockWorkOrders = ({ item }: WorkOrderProps) => {
       onOpenChange={({ open }) => setIsOpen(open)}
     >
       <DialogTrigger asChild>
-      <Button width="100%" variant="solid" size="md" colorPalette="red" display={
+      <Button maxH="35px" width="100%" variant="solid" size="md" colorPalette="red" display={
                   ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state == 'blocked'? 'none' : 'flex'
                 }>Bloquear</Button>
       </DialogTrigger>

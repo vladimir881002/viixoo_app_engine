@@ -234,10 +234,10 @@ function WorkOrdensTable() {
               </Table.Cell>
               <Table.Cell>
                 <Group>
-                <Button size="xs" onClick={() => onClickStartWorkorder({'workorder_id': item.workorder_id})} colorPalette="green" display={
+                <Button minW="60px" size="xs" onClick={() => onClickStartWorkorder({'workorder_id': item.workorder_id})} colorPalette="green" display={
                   ['done', 'cancel'].includes(item.state_value) || ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state == 'blocked' || item.is_user_working? 'none' : 'flex'
                 }>Iniciar</Button>
-                <Button size="xs" onClick={() => onClickFinishWorkorder({'workorder_id': item.workorder_id})} colorPalette="green" display={
+                <Button minW="60px" size="xs" onClick={() => onClickFinishWorkorder({'workorder_id': item.workorder_id})} colorPalette="green" display={
                   ['draft', 'done'].includes(item.production_state) || item.working_state == 'blocked' || !item.is_user_working || (item.quality_state != "" && item.quality_state != "none")
                     || ['register_consumed_materials', 'register_byproducts', 'instructions'].includes(item.test_type)? 'none' : 'flex'
                 }>Listo</Button>
@@ -253,13 +253,13 @@ function WorkOrdensTable() {
                 <MenuContent minWidth="200px" width="full">
                 <ConsumeComponentsWorkOrders item={item} />
                 <AddComponentsWorkOrders item={item} />
-                <Button width="100%" variant="subtle" size="md" onClick={() => onClickPauseWorkorder({'workorder_id': item.workorder_id})} colorPalette="gray" display={
+                <Button maxH="35px" width="100%" variant="subtle" size="md" onClick={() => onClickPauseWorkorder({'workorder_id': item.workorder_id})} colorPalette="gray" display={
                     ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state == 'blocked' || !item.is_user_working? 'none' : 'flex'
                   }>Pausar</Button>
 
                   <BlockWorkOrders item={item} />
 
-                  <Button width="100%" variant="solid" size="md" onClick={() => onClickUnblockWorkorder({'workorder_id': item.workorder_id})} colorPalette="red" display={
+                  <Button maxH="35px" width="100%" variant="solid" size="md" onClick={() => onClickUnblockWorkorder({'workorder_id': item.workorder_id})} colorPalette="red" display={
                     ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state != 'blocked'? 'none' : 'flex'
                   }>Desbloquear</Button>
                 </MenuContent>
