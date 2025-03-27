@@ -38,11 +38,13 @@ class TestMrpEndpoints(unittest.TestCase):
             "duration_expected": 10,
             "duration": None,
             "state": "ready",
+            "state_value": "ready",
             "date_start": "2025-03-12 01:47:56",
             "date_finished": None,
             "url_document_instructions": "",
             "urls_plans": "",
             "time_ids": [],
+            "move_raw_ids": [],
         }
 
     @patch("requests.post")
