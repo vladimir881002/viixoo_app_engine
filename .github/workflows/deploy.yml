@@ -1,0 +1,63 @@
+name: Deploy to EC2
+
+on:
+    workflow_dispatch:
+    push:
+        branches:
+            - main
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Configure AWS Credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                aws-region: us-east-1
+            
+            - name: Set up Terraform
+              uses: hashicorp/setup-terraform@v3
+              with:
+                  terraform_version: 1.11.2
+
+            - name: Terraform Init
+              working-directory: viixoo_app_engine/IaC/terraform
+              run: terraform init
+
+            - name: Terraform Plan
+              working-directory: viixoo_app_engine/IaC/terraform
+              run: terraform plan
+        
+            - name: Terraform Apply
+              working-directory: viixoo_app_engine/IaC/terraform
+              run: |
+                terraform apply -auto-approve
+                echo "::set-output name=instance_id::$(terraform output instance_id)"
+                echo "instance_id=$(terraform output -raw instance_id)" >> $GITHUB_OUTPUT
+                echo "public_ip=$(terraform output -raw instance_public_ip)" >> $GITHUB_OUTPUT
+            
+            - name: Create SSH key
+              run: |
+                mkdir -p ~/.ssh
+                ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/id_rsa
+                cat ~/.ssh/id_rsa.pub
+
+            - name: Send SSH Public Key to EC2
+              if: always()
+              run: |
+                aws ec2-instance-connect send-ssh-public-key \
+                --instance-id ${{ steps.terraform-apply.outputs.instance_id }} \
+                --instance-os-user ubuntu \
+                --ssh-public-key file://~/.ssh/id_rsa.pub \
+                --region us-east-1
+            
+            - name: SSH into EC2
+              if: always()
+              run: |
+                chmod 600 ~/.ssh/id_rsa
+                ssh -i ~/.ssh/id_rsa ubuntu@${{ steps.terraform-apply.outputs.public_ip }} -o StrictHostKeyChecking=no
+            
