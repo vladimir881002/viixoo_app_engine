@@ -5,18 +5,17 @@ import {
   Select,
   createListCollection,
   Portal,
-  Textarea,
   Box,
   Input,
 } from "@chakra-ui/react"
-import useCustomToast from "@/hooks/useCustomToast"
+import useCustomToast from "../../hooks/useCustomToast"
 import { useState, useRef } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { type ApiError, WorkOrdersService } from "@/client"
-import { handleError } from "@/utils"
+import { type ApiError, WorkOrdersService } from "../../client"
+import { handleError } from "../../utils"
 
-import type { WorkOrderPublic, BlockWorkOrder } from "../../client/types.gen"
+import type { WorkOrderPublic, AddComponentsWorkOrder } from "../../client/types.gen"
 import {
   DialogBody,
   DialogCloseTrigger,
@@ -44,40 +43,40 @@ export const blockRules = (isRequired = true) => {
   return rules
 }
 
-export const BlockWorkOrders = ({ item }: WorkOrderProps) => {
+export const AddComponentsWorkOrders = ({ item }: WorkOrderProps) => {
   const {
       handleSubmit,
       reset,
       register,
       formState: { isValid, isSubmitting },
-    } = useForm<BlockWorkOrder>({
+    } = useForm<AddComponentsWorkOrder>({
       mode: "onBlur",
       criteriaMode: "all",
     })
   const [isOpen, setIsOpen] = useState(false)
-  function getReasonsLossQueryOptions() {
+  function getProductsQueryOptions() {
     return {
       queryFn: () =>
-        WorkOrdersService.readReasonsLoss(),
+        WorkOrdersService.readProducts(),
       queryKey: ["items"],
     }
   }
   const { data } = useQuery({
-    ...getReasonsLossQueryOptions(),
+    ...getProductsQueryOptions(),
     placeholderData: (prevData) => prevData,
   })
-  const items_data = data?.data ?? []
-  const reasons = createListCollection({items:items_data})
+  const items_data_products = data?.data ?? []
+  const products = createListCollection({items:items_data_products})
   const contentRef = useRef<HTMLDivElement>(null)
 
   const { showSuccessToast } = useCustomToast()
   const queryClient = useQueryClient()
   const mutation = useMutation({
-      mutationFn: (data: BlockWorkOrder) =>
-        WorkOrdersService.blockWorkorder({ requestBody: data }),
+      mutationFn: (data: AddComponentsWorkOrder) =>
+        WorkOrdersService.addComponentWorkorder({ requestBody: data }),
       onSuccess: () => {
-        showSuccessToast("Orden bloquada satisfactoriamente.")
-        queryClient.invalidateQueries({ queryKey: ["items"] })
+        showSuccessToast("Componente agregado satisfactoriamente.")
+        queryClient.invalidateQueries({ queryKey: ["workorders"] })
         reset()
       },
       onError: (err: ApiError) => {
@@ -85,7 +84,7 @@ export const BlockWorkOrders = ({ item }: WorkOrderProps) => {
       },
     })
 
-    const onSubmit: SubmitHandler<BlockWorkOrder> = async (data) => {
+    const onSubmit: SubmitHandler<AddComponentsWorkOrder> = async (data) => {
       mutation.mutate(data)
     }
   return (
@@ -96,23 +95,21 @@ export const BlockWorkOrders = ({ item }: WorkOrderProps) => {
       onOpenChange={({ open }) => setIsOpen(open)}
     >
       <DialogTrigger asChild>
-      <Button width="100%" variant="solid" size="md" colorPalette="red" display={
-                  ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state == 'blocked'? 'none' : 'flex'
-                }>Bloquear</Button>
+      <Button width="100%" variant="subtle" size="md" colorPalette="gray" >Agregar componente</Button>
       </DialogTrigger>
       <Portal>
       <DialogContent ref={contentRef}>
         <Box as="form" onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
-            <DialogTitle>Bloquear Orden de trabajo</DialogTitle>
+            <DialogTitle>Agregar componente</DialogTitle>
           </DialogHeader>
           <DialogBody>
-           <Field label="Motivo de pérdida:">
-          <Select.Root required collection={reasons} size="sm" {...register("loss_id", blockRules())}>
+           <Field label="Producto:">
+          <Select.Root required collection={products} size="sm" {...register("product_id", blockRules())}>
             <Select.HiddenSelect />
             <Select.Control>
                   <Select.Trigger>
-                    <Select.ValueText placeholder="Seleccione el motivo" />
+                    <Select.ValueText placeholder="Seleccione el producto" />
                   </Select.Trigger>
                   <Select.IndicatorGroup>
                     <Select.Indicator />
@@ -121,7 +118,7 @@ export const BlockWorkOrders = ({ item }: WorkOrderProps) => {
               <Portal container={contentRef}>
                   <Select.Positioner>
                     <Select.Content>
-                      {reasons.items.map((item) => (
+                      {products.items.map((item) => (
                         <Select.Item item={item} key={item.value}>
                           {item.label}
                         </Select.Item>
@@ -131,8 +128,8 @@ export const BlockWorkOrders = ({ item }: WorkOrderProps) => {
                 </Portal>
               </Select.Root>
               </Field>
-              <Field label="Descripción:">
-              <Textarea {...register("description")}/>
+              <Field label="Cantidad:">
+              <Input {...register("quantity")}/>
               </Field>
               <Input value={item.workorder_id} display='none' {...register("workorder_id")}
                   />
@@ -142,12 +139,12 @@ export const BlockWorkOrders = ({ item }: WorkOrderProps) => {
             <ButtonGroup>
               <DialogActionTrigger asChild>
                 <Button
-                  colorPalette="red"
+                  colorPalette="blue"
                   type="submit"
                   loading={isSubmitting}
                   disabled={!isValid}
                 >
-                  Bloquear
+                  Agregar
                 </Button>
               </DialogActionTrigger>
               <DialogActionTrigger asChild>

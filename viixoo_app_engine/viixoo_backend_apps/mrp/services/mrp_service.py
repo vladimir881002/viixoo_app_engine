@@ -1,5 +1,20 @@
+"""Service to publish the functions used in the MRP module routes."""
+
 from datetime import timedelta
-from ..models.models import Token, User, UpdatePassword, Message, ProductionOrders, WorkOrders, ReasonsLoss, ChangeStateWorkOrder, BlockWorkOrder
+from ..models.models import (
+    Token,
+    User,
+    UpdatePassword,
+    Message,
+    ProductionOrders,
+    WorkOrders,
+    ReasonsLoss,
+    ChangeStateWorkOrder,
+    BlockWorkOrder,
+    Products,
+    AddComponent,
+    ConsumeComponent,
+)
 from typing import Any
 import requests
 import logging
@@ -17,33 +32,40 @@ from dotenv import load_dotenv
 
 _logger = logging.getLogger(__name__)
 
-reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl="/login/access-token"
-)
+reusable_oauth2 = OAuth2PasswordBearer(tokenUrl="/login/access-token")
 load_dotenv()
 
 SECRET_KEY = security.SECRET_KEY
 config = configparser.ConfigParser()
-config_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'mrp.conf')
+config_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "mrp.conf")
 config.read(config_file_path)
-URL_ODOO = config.get('settings_odoo', 'url_odoo')
+URL_ODOO = config.get("settings_odoo", "url_odoo")
 TOKEN_ODOO = os.getenv("TOKEN_ODOO", "")
 
+
 class MrpService(BaseService):
-    def __init__(self):        
+    """MRP service."""
+
+    def __init__(self):
+        """Initialize the MrpService class."""
         super().__init__("mrp")
 
-    def authenticate_user(self, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
+    def authenticate_user(
+        self, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    ) -> Token:
+        """Authenticate user."""
         headers = {
             "Auth-Token": TOKEN_ODOO,
             "Content-Type": "application/json",
         }
         try:
-            
+
             odoo_response = requests.post(
-                URL_ODOO+"/hemago/authenticate_user/",
+                URL_ODOO + "/hemago/authenticate_user/",
                 headers=headers,
-                data=json.dumps({"user_login": form_data.username, "password": form_data.password}),
+                data=json.dumps(
+                    {"user_login": form_data.username, "password": form_data.password}
+                ),
                 verify=True,
                 timeout=100,
             )
@@ -51,31 +73,34 @@ class MrpService(BaseService):
             error_str = str(e)
             _logger.error("Ha ocurrido un error al enviar la solicitud a Odoo")
             _logger.error(error_str)
-            raise HTTPException(status_code=400, detail="Usuario o contraseña incorrecto")
+            raise HTTPException(
+                status_code=400, detail="Usuario o contraseña incorrecto"
+            )
         else:
             response = json.loads(odoo_response.text)
             if response.get("employee"):
                 employee = response["employee"]
                 access_token_expires = timedelta(minutes=600)
                 return Token(
-                        access_token=security.create_access_token(
-                        employee['id'], expires_delta=access_token_expires
+                    access_token=security.create_access_token(
+                        employee["id"], expires_delta=access_token_expires
                     )
                 )
             else:
-                raise HTTPException(status_code=400, detail="Usuario o contraseña incorrecto")
-            
+                raise HTTPException(
+                    status_code=400, detail="Usuario o contraseña incorrecto"
+                )
+
     def get_user(self, token: Annotated[str, Depends(reusable_oauth2)]) -> User:
+        """Get user data."""
         headers = {
             "Auth-Token": TOKEN_ODOO,
             "Content-Type": "application/json",
         }
         try:
-            payload = jwt.decode(
-                token, SECRET_KEY, algorithms=[security.ALGORITHM]
-            )
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[security.ALGORITHM])
             odoo_response = requests.get(
-                URL_ODOO+"/hemago/get_employee/",
+                URL_ODOO + "/hemago/get_employee/",
                 headers=headers,
                 data=json.dumps({"employee_id": payload.get("sub")}),
                 verify=True,
@@ -90,23 +115,25 @@ class MrpService(BaseService):
             response = json.loads(odoo_response.text)
             if response.get("employee"):
                 employee = response["employee"]
-                return User(
-                        full_name=employee["name"],
-                        email=employee["email"]
-                    )
-            
-    def reset_password(self, token: Annotated[str, Depends(reusable_oauth2)], body: UpdatePassword) -> Any:
+                return User(full_name=employee["name"], email=employee["email"])
+
+    def reset_password(
+        self, token: Annotated[str, Depends(reusable_oauth2)], body: UpdatePassword
+    ) -> Any:
+        """Reset password."""
         headers = {
             "Auth-Token": TOKEN_ODOO,
             "Content-Type": "application/json",
         }
         try:
-            payload = jwt.decode(
-                token, SECRET_KEY, algorithms=[security.ALGORITHM]
-            )
-            data = {"employee_id": payload.get("sub"), "new_password": body.new_password, "current_password": body.current_password}
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[security.ALGORITHM])
+            data = {
+                "employee_id": payload.get("sub"),
+                "new_password": body.new_password,
+                "current_password": body.current_password,
+            }
             odoo_response = requests.post(
-                URL_ODOO+"/hemago/reset_password/",
+                URL_ODOO + "/hemago/reset_password/",
                 headers=headers,
                 data=json.dumps(data),
                 verify=True,
@@ -123,20 +150,23 @@ class MrpService(BaseService):
                 return Message(message="Contraseña cambiada satisfactoriamente")
             else:
                 raise HTTPException(status_code=500, detail="Acceso denegado")
-            
-    def get_production_orders(self, token: Annotated[str, Depends(reusable_oauth2)], skip: int = 0, limit: int = 100
-        ) -> Any:
+
+    def get_production_orders(
+        self,
+        token: Annotated[str, Depends(reusable_oauth2)],
+        skip: int = 0,
+        limit: int = 100,
+    ) -> Any:
+        """Get production orders."""
         headers = {
             "Auth-Token": TOKEN_ODOO,
             "Content-Type": "application/json",
         }
         try:
-            payload = jwt.decode(
-                token, SECRET_KEY, algorithms=[security.ALGORITHM]
-            )
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[security.ALGORITHM])
             data = {"employee_id": payload.get("sub"), "start": skip, "limit": limit}
             odoo_response = requests.get(
-                URL_ODOO+"/hemago/get_production_order/",
+                URL_ODOO + "/hemago/get_production_order/",
                 headers=headers,
                 data=json.dumps(data),
                 verify=True,
@@ -146,27 +176,36 @@ class MrpService(BaseService):
             error_str = str(e)
             _logger.error("Ha ocurrido un error al enviar la solicitud a Odoo")
             _logger.error(error_str)
-            raise HTTPException(status_code=400, detail="Ha ocurrido un error al enviar la solicitud a Odoo")
+            raise HTTPException(
+                status_code=400,
+                detail="Ha ocurrido un error al enviar la solicitud a Odoo",
+            )
         else:
             response = json.loads(odoo_response.text)
             if response.get("status") == "success":
-                return ProductionOrders(data=response.get("production_order_ids"), count=response.get("count"))
+                return ProductionOrders(
+                    data=response.get("production_order_ids"),
+                    count=response.get("count"),
+                )
             else:
                 raise HTTPException(status_code=500)
-            
-    def get_workorders(self, token: Annotated[str, Depends(reusable_oauth2)], skip: int = 0, limit: int = 100
-        ) -> Any:
+
+    def get_workorders(
+        self,
+        token: Annotated[str, Depends(reusable_oauth2)],
+        skip: int = 0,
+        limit: int = 100,
+    ) -> Any:
+        """Get work orders."""
         headers = {
             "Auth-Token": TOKEN_ODOO,
             "Content-Type": "application/json",
         }
         try:
-            payload = jwt.decode(
-                token, SECRET_KEY, algorithms=[security.ALGORITHM]
-            )
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[security.ALGORITHM])
             data = {"employee_id": payload.get("sub"), "start": skip, "limit": limit}
             odoo_response = requests.get(
-                URL_ODOO+"/hemago/get_workorder/",
+                URL_ODOO + "/hemago/get_workorder/",
                 headers=headers,
                 data=json.dumps(data),
                 verify=True,
@@ -176,23 +215,28 @@ class MrpService(BaseService):
             error_str = str(e)
             _logger.error("Ha ocurrido un error al enviar la solicitud a Odoo")
             _logger.error(error_str)
-            raise HTTPException(status_code=400, detail="Ha ocurrido un error al enviar la solicitud a Odoo")
+            raise HTTPException(
+                status_code=400,
+                detail="Ha ocurrido un error al enviar la solicitud a Odoo",
+            )
         else:
             response = json.loads(odoo_response.text)
             if response.get("status") == "success":
-                return WorkOrders(data=response.get("workorder_ids"), count=response.get("count"))
+                return WorkOrders(
+                    data=response.get("workorder_ids"), count=response.get("count")
+                )
             else:
                 raise HTTPException(status_code=500)
-            
-    def get_reasons_loss(self, token: Annotated[str, Depends(reusable_oauth2)]
-        ) -> Any:
+
+    def get_reasons_loss(self, token: Annotated[str, Depends(reusable_oauth2)]) -> Any:
+        """Get reasons loss."""
         headers = {
             "Auth-Token": TOKEN_ODOO,
             "Content-Type": "application/json",
         }
         try:
             odoo_response = requests.get(
-                URL_ODOO+"/hemago/get_reasons_loss/",
+                URL_ODOO + "/hemago/get_reasons_loss/",
                 headers=headers,
                 verify=True,
                 timeout=100,
@@ -201,26 +245,63 @@ class MrpService(BaseService):
             error_str = str(e)
             _logger.error("Ha ocurrido un error al enviar la solicitud a Odoo")
             _logger.error(error_str)
-            raise HTTPException(status_code=400, detail="Ha ocurrido un error al enviar la solicitud a Odoo")
+            raise HTTPException(
+                status_code=400,
+                detail="Ha ocurrido un error al enviar la solicitud a Odoo",
+            )
         else:
             response = json.loads(odoo_response.text)
             if response.get("status") == "success":
                 return ReasonsLoss(data=response.get("loss_ids"))
             else:
                 raise HTTPException(status_code=500)
-            
-    def start_workorder(self, token: Annotated[str, Depends(reusable_oauth2)], body: ChangeStateWorkOrder) -> Any:
+
+    def get_products(self, token: Annotated[str, Depends(reusable_oauth2)]) -> Any:
+        """Get products."""
         headers = {
             "Auth-Token": TOKEN_ODOO,
             "Content-Type": "application/json",
         }
         try:
-            payload = jwt.decode(
-                token, SECRET_KEY, algorithms=[security.ALGORITHM]
+            odoo_response = requests.get(
+                URL_ODOO + "/hemago/get_products/",
+                headers=headers,
+                verify=True,
+                timeout=100,
             )
-            data = {"employee_id": payload.get("sub"), "workorder_id": body.workorder_id}
+        except Exception as e:
+            error_str = str(e)
+            _logger.error("Ha ocurrido un error al enviar la solicitud a Odoo")
+            _logger.error(error_str)
+            raise HTTPException(
+                status_code=400,
+                detail="Ha ocurrido un error al enviar la solicitud a Odoo",
+            )
+        else:
+            response = json.loads(odoo_response.text)
+            if response.get("status") == "success":
+                return Products(data=response.get("product_ids"))
+            else:
+                raise HTTPException(status_code=500)
+
+    def start_workorder(
+        self,
+        token: Annotated[str, Depends(reusable_oauth2)],
+        body: ChangeStateWorkOrder,
+    ) -> Any:
+        """Start workorder."""
+        headers = {
+            "Auth-Token": TOKEN_ODOO,
+            "Content-Type": "application/json",
+        }
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[security.ALGORITHM])
+            data = {
+                "employee_id": payload.get("sub"),
+                "workorder_id": body.workorder_id,
+            }
             odoo_response = requests.post(
-                URL_ODOO+"/hemago/start_workorder/",
+                URL_ODOO + "/hemago/start_workorder/",
                 headers=headers,
                 data=json.dumps(data),
                 verify=True,
@@ -236,20 +317,26 @@ class MrpService(BaseService):
             if response.get("status") == "success":
                 return Message(message="Orden de trabajo iniciada satisfactoriamente")
             else:
-               raise HTTPException(status_code=400, detail="Orden no encontrada")
-            
-    def block_workorder(self, token: Annotated[str, Depends(reusable_oauth2)], body: BlockWorkOrder) -> Any:
+                raise HTTPException(status_code=400, detail="Orden no encontrada")
+
+    def block_workorder(
+        self, token: Annotated[str, Depends(reusable_oauth2)], body: BlockWorkOrder
+    ) -> Any:
+        """Block workorder."""
         headers = {
             "Auth-Token": TOKEN_ODOO,
             "Content-Type": "application/json",
         }
         try:
-            payload = jwt.decode(
-                token, SECRET_KEY, algorithms=[security.ALGORITHM]
-            )
-            data = {"employee_id": payload.get("sub"), "workorder_id": body.workorder_id, "loss_id": body.loss_id, "description": body.description}
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[security.ALGORITHM])
+            data = {
+                "employee_id": payload.get("sub"),
+                "workorder_id": body.workorder_id,
+                "loss_id": body.loss_id,
+                "description": body.description,
+            }
             odoo_response = requests.post(
-                URL_ODOO+"/hemago/block_workorder/",
+                URL_ODOO + "/hemago/block_workorder/",
                 headers=headers,
                 data=json.dumps(data),
                 verify=True,
@@ -265,20 +352,26 @@ class MrpService(BaseService):
             if response.get("status") == "success":
                 return Message(message="Orden de trabajo bloqueada satisfactoriamente")
             else:
-               raise HTTPException(status_code=400, detail="Orden no encontrada")
-            
-    def finish_workorder(self, token: Annotated[str, Depends(reusable_oauth2)], body: ChangeStateWorkOrder) -> Any:
+                raise HTTPException(status_code=400, detail="Orden no encontrada")
+
+    def finish_workorder(
+        self,
+        token: Annotated[str, Depends(reusable_oauth2)],
+        body: ChangeStateWorkOrder,
+    ) -> Any:
+        """Finish workorder."""
         headers = {
             "Auth-Token": TOKEN_ODOO,
             "Content-Type": "application/json",
         }
         try:
-            payload = jwt.decode(
-                token, SECRET_KEY, algorithms=[security.ALGORITHM]
-            )
-            data = {"employee_id": payload.get("sub"), "workorder_id": body.workorder_id}
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[security.ALGORITHM])
+            data = {
+                "employee_id": payload.get("sub"),
+                "workorder_id": body.workorder_id,
+            }
             odoo_response = requests.post(
-                URL_ODOO+"/hemago/finish_workorder/",
+                URL_ODOO + "/hemago/finish_workorder/",
                 headers=headers,
                 data=json.dumps(data),
                 verify=True,
@@ -294,20 +387,26 @@ class MrpService(BaseService):
             if response.get("status") == "success":
                 return Message(message="Orden de trabajo finalizada satisfactoriamente")
             else:
-               raise HTTPException(status_code=400, detail="Orden no encontrada")
-            
-    def pause_workorder(self, token: Annotated[str, Depends(reusable_oauth2)], body: ChangeStateWorkOrder) -> Any:
+                raise HTTPException(status_code=400, detail="Orden no encontrada")
+
+    def pause_workorder(
+        self,
+        token: Annotated[str, Depends(reusable_oauth2)],
+        body: ChangeStateWorkOrder,
+    ) -> Any:
+        """Pause workorder."""
         headers = {
             "Auth-Token": TOKEN_ODOO,
             "Content-Type": "application/json",
         }
         try:
-            payload = jwt.decode(
-                token, SECRET_KEY, algorithms=[security.ALGORITHM]
-            )
-            data = {"employee_id": payload.get("sub"), "workorder_id": body.workorder_id}
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[security.ALGORITHM])
+            data = {
+                "employee_id": payload.get("sub"),
+                "workorder_id": body.workorder_id,
+            }
             odoo_response = requests.post(
-                URL_ODOO+"/hemago/pause_workorder/",
+                URL_ODOO + "/hemago/pause_workorder/",
                 headers=headers,
                 data=json.dumps(data),
                 verify=True,
@@ -323,20 +422,26 @@ class MrpService(BaseService):
             if response.get("status") == "success":
                 return Message(message="Orden de trabajo pausada satisfactoriamente")
             else:
-               raise HTTPException(status_code=400, detail="Orden no encontrada")
-            
-    def unblock_workorder(self, token: Annotated[str, Depends(reusable_oauth2)], body: ChangeStateWorkOrder) -> Any:
+                raise HTTPException(status_code=400, detail="Orden no encontrada")
+
+    def unblock_workorder(
+        self,
+        token: Annotated[str, Depends(reusable_oauth2)],
+        body: ChangeStateWorkOrder,
+    ) -> Any:
+        """Unblock workorder."""
         headers = {
             "Auth-Token": TOKEN_ODOO,
             "Content-Type": "application/json",
         }
         try:
-            payload = jwt.decode(
-                token, SECRET_KEY, algorithms=[security.ALGORITHM]
-            )
-            data = {"employee_id": payload.get("sub"), "workorder_id": body.workorder_id}
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[security.ALGORITHM])
+            data = {
+                "employee_id": payload.get("sub"),
+                "workorder_id": body.workorder_id,
+            }
             odoo_response = requests.post(
-                URL_ODOO+"/hemago/unblock_workorder/",
+                URL_ODOO + "/hemago/unblock_workorder/",
                 headers=headers,
                 data=json.dumps(data),
                 verify=True,
@@ -350,6 +455,77 @@ class MrpService(BaseService):
         else:
             response = json.loads(odoo_response.text)
             if response.get("status") == "success":
-                return Message(message="Orden de trabajo desbloqueada satisfactoriamente")
+                return Message(
+                    message="Orden de trabajo desbloqueada satisfactoriamente"
+                )
             else:
-               raise HTTPException(status_code=400, detail="Orden no encontrada")
+                raise HTTPException(status_code=400, detail="Orden no encontrada")
+
+    def add_components_workorder(
+        self, token: Annotated[str, Depends(reusable_oauth2)], body: AddComponent
+    ) -> Any:
+        """Add components workorder."""
+        headers = {
+            "Auth-Token": TOKEN_ODOO,
+            "Content-Type": "application/json",
+        }
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[security.ALGORITHM])
+            data = {
+                "employee_id": payload.get("sub"),
+                "workorder_id": body.workorder_id,
+                "product_id": body.product_id,
+                "product_qty": body.quantity,
+            }
+            odoo_response = requests.post(
+                URL_ODOO + "/hemago/add_components_workorder/",
+                headers=headers,
+                data=json.dumps(data),
+                verify=True,
+                timeout=100,
+            )
+        except Exception as e:
+            error_str = str(e)
+            _logger.error("Ha ocurrido un error al enviar la solicitud a Odoo")
+            _logger.error(error_str)
+            raise HTTPException(status_code=400, detail="Orden no encontrada")
+        else:
+            response = json.loads(odoo_response.text)
+            if response.get("status") == "success":
+                return Message(message="Componente agregado satisfactoriamente")
+            else:
+                raise HTTPException(status_code=400, detail="Orden no encontrada")
+
+    def consume_component_workorder(
+        self, token: Annotated[str, Depends(reusable_oauth2)], body: ConsumeComponent
+    ) -> Any:
+        """Consume components workorder."""
+        headers = {
+            "Auth-Token": TOKEN_ODOO,
+            "Content-Type": "application/json",
+        }
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[security.ALGORITHM])
+            data = {
+                "employee_id": payload.get("sub"),
+                "move_id": body.move_raw_id,
+                "picked": body.consumed,
+            }
+            odoo_response = requests.post(
+                URL_ODOO + "/hemago/consume_component_workorder/",
+                headers=headers,
+                data=json.dumps(data),
+                verify=True,
+                timeout=100,
+            )
+        except Exception as e:
+            error_str = str(e)
+            _logger.error("Ha ocurrido un error al enviar la solicitud a Odoo")
+            _logger.error(error_str)
+            raise HTTPException(status_code=400, detail="Componente no encontrado")
+        else:
+            response = json.loads(odoo_response.text)
+            if response.get("status") == "success":
+                return Message(message="Componente consumido satisfactoriamente")
+            else:
+                raise HTTPException(status_code=400, detail="Componente no encontrado")

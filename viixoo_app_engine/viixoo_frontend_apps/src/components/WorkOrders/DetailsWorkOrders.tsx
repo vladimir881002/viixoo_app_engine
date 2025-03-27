@@ -41,14 +41,14 @@ export const TimeElapsed = ( { date_start }: TimeEmployeePublicProps) => {
 };
 
 export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
-  const [isOpen, setIsOpen] = useState(false) 
+  const [isOpen, setIsOpen] = useState(false)
 
   const formatDurationTime = (duration: number): string => {
     const minutes = Math.floor(duration);
     const seconds = Math.round((duration % 1) * 60);
     return `${minutes}:${seconds}`;
   };
-  
+
   return (
     <DialogRoot
       size={{ base: "xs", md: "md" }}
@@ -75,6 +75,7 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                   id="name"
                   type="text"
                   defaultValue={item?.name || ""}
+                  readOnly
                 >
                 </Input>
               </Field>
@@ -85,6 +86,7 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                   id="workcenter"
                   type="text"
                   defaultValue={item?.workcenter || ""}
+                  readOnly
                 >
                 </Input>
               </Field>
@@ -96,9 +98,10 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                   id="product"
                   type="text"
                   defaultValue={item?.product || ""}
+                  readOnly
                 >
                 </Input>
-              </Field>   
+              </Field>
               <Field
                 label="Cantidad a producir:"
               >
@@ -106,9 +109,10 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                   id="qty_remaining"
                   type="text"
                   defaultValue={item?.qty_remaining || ""}
+                  readOnly
                 >
                 </Input>
-              </Field>           
+              </Field>
               <Field
                 label="Estado:"
               >
@@ -116,6 +120,7 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                   id="duration_expected"
                   type="text"
                   defaultValue={item?.state || ""}
+                  readOnly
                 >
                 </Input>
               </Field>
@@ -132,14 +137,14 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                     </Tabs.Trigger>
                 </Tabs.List>
                <Tabs.Content key="1" value="tab-work-order-time">
-                  <Box maxH="100px" overflowY="auto" borderWidth="1px" borderRadius="md">
+                  <Box maxH="130px" overflowY="auto" borderWidth="1px" borderRadius="md">
                     <Table.Root maxH="100px" size="sm" showColumnBorder>
                       <Table.Header>
                         <Table.Row>
-                          <Table.ColumnHeader w="sm">Empleado</Table.ColumnHeader>
-                          <Table.ColumnHeader w="sm">Duración</Table.ColumnHeader>
-                          <Table.ColumnHeader w="sm">Inicio</Table.ColumnHeader>
-                          <Table.ColumnHeader w="sm">Fin</Table.ColumnHeader>
+                          <Table.ColumnHeader fontWeight="bold" w="sm">Empleado</Table.ColumnHeader>
+                          <Table.ColumnHeader fontWeight="bold" w="sm">Duración</Table.ColumnHeader>
+                          <Table.ColumnHeader fontWeight="bold" w="sm">Inicio</Table.ColumnHeader>
+                          <Table.ColumnHeader fontWeight="bold" w="sm">Fin</Table.ColumnHeader>
                         </Table.Row>
                       </Table.Header>
                       <Table.Body>
@@ -184,7 +189,7 @@ export const DetailsWorkOrders = ({ item }: WorkOrderProps) => {
                       </Textarea>
                   </Field>
                   </Tabs.Content>
-                  <Tabs.Content key="3" value="tab-others">                  
+                  <Tabs.Content key="3" value="tab-others">
               <Field
                 label="Duración esperada:"
               >

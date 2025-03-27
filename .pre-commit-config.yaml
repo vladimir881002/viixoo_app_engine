@@ -27,7 +27,12 @@ repos:
         additional_dependencies:
           - "prettier@2.7.1"
           - "@prettier/plugin-xml@2.2.0"
-        args: [--plugin=@prettier/plugin-xml, --ignore-unknown]
+        args:
+          [
+            --plugin=@prettier/plugin-xml,
+            --ignore-unknown,
+            --ignore-path .prettierignore,
+          ]
         files: \.(css|htm|html|js|json|jsx|less|md|scss|toml|ts|xml|yaml|yml)$
   - repo: https://github.com/psf/black
     rev: 24.2.0 # Use the ref of the latest version
