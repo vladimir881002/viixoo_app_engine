@@ -23,6 +23,7 @@ dependencies = [
     "pydantic",
     "psycopg2-binary",
     "Jinja2",
+    "python-multipart",
 ]
 
 [project.urls]
