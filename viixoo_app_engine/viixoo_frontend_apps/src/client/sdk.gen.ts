@@ -390,7 +390,7 @@ export class UtilsService {
   public static healthCheck(): CancelablePromise<UtilsHealthCheckResponse> {
     return __request(OpenAPI, {
       method: "GET",
-      url: "/health-check/",
+      url: "v1/healthcheck/",
     });
   }
 }

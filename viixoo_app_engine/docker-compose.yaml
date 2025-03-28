@@ -1,5 +1,4 @@
-version: '3.8'
-
+version: "3.8"
 
 networks:
   viixoo-hemago-mrp:
@@ -8,7 +7,7 @@ networks:
 services:
   backend_dev:
     container_name: viixoo_hemago_backend_dev
-    build: 
+    build:
       context: .
       dockerfile: ./viixoo_core/docker/dev.DockerFile
     command:
@@ -20,10 +19,10 @@ services:
     ports:
       - "8002:8002"
     healthcheck:
-       test: ["CMD", "curl", "-f", "http://localhost:8002/api/v1/utils/health-check/"]
-       interval: 10s
-       timeout: 5s
-       retries: 5
+      test: ["CMD", "curl", "-f", "http://localhost:8002/v1/healthcheck/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: always
@@ -34,17 +33,26 @@ services:
 
   backend_prod:
     container_name: viixoo_hemago_backend_prod
-    build: 
+    build:
       context: .
       dockerfile: ./viixoo_core/docker/prod.DockerFile
-    command: ["uvicorn", "viixoo_core.viixoo_core.app:app", "--host", "0.0.0.0", "--reload", "--port", "8000"]
+    command:
+      [
+        "uvicorn",
+        "viixoo_core.viixoo_core.app:app",
+        "--host",
+        "0.0.0.0",
+        "--reload",
+        "--port",
+        "8000",
+      ]
     ports:
       - "8000:8000"
     healthcheck:
-       test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/utils/health-check/"]
-       interval: 10s
-       timeout: 5s
-       retries: 5
+      test: ["CMD", "curl", "-f", "http://localhost:8000/v1/healthcheck/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: always
@@ -69,4 +77,3 @@ services:
         - NODE_ENV=production
     networks:
       - viixoo-hemago-mrp
-

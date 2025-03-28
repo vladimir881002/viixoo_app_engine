@@ -38,11 +38,13 @@ class TestMrpEndpoints(unittest.TestCase):
             "duration_expected": 10,
             "duration": None,
             "state": "ready",
+            "state_value": "ready",
             "date_start": "2025-03-12 01:47:56",
             "date_finished": None,
             "url_document_instructions": "",
             "urls_plans": "",
             "time_ids": [],
+            "move_raw_ids": [],
         }
 
     @patch("requests.post")
@@ -330,6 +332,22 @@ class TestMrpEndpoints(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()["data"]), 1)
 
+    @patch("requests.get")
+    def test_get_products(self, mock_get):
+        """Test to obtain information from the products."""
+        mock_data = {
+            "status": "success",
+            "product_ids": [{"value": 1, "label": "product test"}],
+        }
+        mock_get.return_value.text = json.dumps(mock_data)
+
+        response = client.get(
+            "/products", headers={"Authorization": f"Bearer {self.valid_token}"}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()["data"]), 1)
+
     @patch("requests.post")
     @patch("jwt.decode")
     def test_reset_password_failure(self, mock_jwt_decode, mock_post):
@@ -373,6 +391,62 @@ class TestMrpEndpoints(unittest.TestCase):
         characters = string.ascii_letters + string.digits
         password = "".join(random.choice(characters) for _ in range(15))
         return password
+
+    @patch("requests.post")
+    @patch("jwt.decode")
+    def test_consume_component_failure(self, mock_jwt_decode, mock_post):
+        """Test consume components failure."""
+        mock_post.side_effect = Exception("Simulated error")
+        mock_jwt_decode.return_value = {"sub": "employee_id_1"}
+
+        response = client.patch(
+            "/component/consume",
+            headers={"Authorization": f"Bearer {self.valid_token}"},
+            json={
+                "move_raw_id": 1,
+                "consumed": 1,
+            },
+        )
+        self.assertEqual(response.status_code, 400)
+
+    @patch("requests.post")
+    @patch("jwt.decode")
+    def test_consume_component_success(self, mock_jwt_decode, mock_post):
+        """Test consume component success."""
+        mock_data = {"status": "success"}
+        mock_post.return_value.text = json.dumps(mock_data)
+        mock_jwt_decode.return_value = {"sub": "employee_id_1"}
+
+        response = client.patch(
+            "/component/consume",
+            headers={"Authorization": f"Bearer {self.valid_token}"},
+            json={
+                "move_raw_id": 1,
+                "consumed": 1,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json().get("message"), "Componente consumido satisfactoriamente"
+        )
+
+    @patch("requests.post")
+    @patch("jwt.decode")
+    def test_add_component_failure(self, mock_jwt_decode, mock_post):
+        """Test add components failure."""
+        mock_post.side_effect = Exception("Simulated error")
+        mock_jwt_decode.return_value = {"sub": "employee_id_1"}
+
+        response = client.patch(
+            "/component/add",
+            headers={"Authorization": f"Bearer {self.valid_token}"},
+            json={
+                "workorder_id": 1,
+                "product_id": 1,
+                "quantity": 1,
+            },
+        )
+        self.assertEqual(response.status_code, 400)
 
 
 if __name__ == "__main__":

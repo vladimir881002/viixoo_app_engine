@@ -34,4 +34,3 @@ resource "aws_instance" "app_server" {
 #  instance = aws_instance.app_server.id
 #  vpc      = true
 #}
-

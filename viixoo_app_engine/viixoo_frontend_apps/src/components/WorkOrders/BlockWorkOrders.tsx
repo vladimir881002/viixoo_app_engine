@@ -59,7 +59,7 @@ export const BlockWorkOrders = ({ item }: WorkOrderProps) => {
     return {
       queryFn: () =>
         WorkOrdersService.readReasonsLoss(),
-      queryKey: ["items"],
+      queryKey: ["reasons"],
     }
   }
   const { data } = useQuery({
@@ -76,7 +76,7 @@ export const BlockWorkOrders = ({ item }: WorkOrderProps) => {
       mutationFn: (data: BlockWorkOrder) =>
         WorkOrdersService.blockWorkorder({ requestBody: data }),
       onSuccess: () => {
-        showSuccessToast("Orden bloquada satisfactoriamente.")
+        showSuccessToast("Orden bloqueada satisfactoriamente.")
         queryClient.invalidateQueries({ queryKey: ["items"] })
         reset()
       },
@@ -96,7 +96,7 @@ export const BlockWorkOrders = ({ item }: WorkOrderProps) => {
       onOpenChange={({ open }) => setIsOpen(open)}
     >
       <DialogTrigger asChild>
-      <Button width="100%" variant="solid" size="md" colorPalette="red" display={
+      <Button maxH="35px" width="100%" variant="solid" size="md" colorPalette="red" display={
                   ['draft', 'done', 'cancel'].includes(item.production_state) || item.working_state == 'blocked'? 'none' : 'flex'
                 }>Bloquear</Button>
       </DialogTrigger>

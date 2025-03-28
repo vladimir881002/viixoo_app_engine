@@ -58,7 +58,7 @@ export const AddComponentsWorkOrders = ({ item }: WorkOrderProps) => {
     return {
       queryFn: () =>
         WorkOrdersService.readProducts(),
-      queryKey: ["items"],
+      queryKey: ["products"],
     }
   }
   const { data } = useQuery({
@@ -95,7 +95,7 @@ export const AddComponentsWorkOrders = ({ item }: WorkOrderProps) => {
       onOpenChange={({ open }) => setIsOpen(open)}
     >
       <DialogTrigger asChild>
-      <Button width="100%" variant="subtle" size="md" colorPalette="gray" >Agregar componente</Button>
+      <Button maxH="35px" width="100%" variant="subtle" size="md" colorPalette="gray" >Agregar componente</Button>
       </DialogTrigger>
       <Portal>
       <DialogContent ref={contentRef}>
@@ -129,7 +129,10 @@ export const AddComponentsWorkOrders = ({ item }: WorkOrderProps) => {
               </Select.Root>
               </Field>
               <Field label="Cantidad:">
-              <Input {...register("quantity")}/>
+              <Input type="number" {...register("quantity", {
+                    required: "Ingrese una cantidad",
+                    min: { value: 1, message: "La cantidad debe ser mayor a cero" },
+                  })}/>
               </Field>
               <Input value={item.workorder_id} display='none' {...register("workorder_id")}
                   />
