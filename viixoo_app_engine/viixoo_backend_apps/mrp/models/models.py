@@ -79,7 +79,7 @@ class User(BaseModel):
     """Model for an user."""
 
     full_name: str = Field(max_length=255)
-    email: str
+    email: str | None = Field(max_length=255)
 
 
 class UpdatePassword(BaseModel):
