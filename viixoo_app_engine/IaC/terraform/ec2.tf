@@ -24,13 +24,19 @@ resource "aws_instance" "app_server" {
   tags = {
     Name = "viixoo-hemago-app-server"
   }
+
+  metadata_options {
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 2
+    http_endpoint               = "enabled"
+    instance_metadata_tags      = "enabled"
+  }
 }
 
 # ------------------------------------------------------------------------------
 # Elastic IP (Optional)
 # ------------------------------------------------------------------------------
 
-# resource "aws_eip" "app_eip" {
-#  instance = aws_instance.app_server.id
-#  vpc      = true
-#}
+resource "aws_eip" "app_eip" {
+  instance = aws_instance.app_server.id
+}
