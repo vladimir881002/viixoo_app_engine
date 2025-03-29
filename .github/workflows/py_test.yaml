@@ -23,11 +23,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd viixoo_app_engine/viixoo_core
           python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
-          cd ../viixoo_backend_apps
-          pip install -r requirements.txt
+          pip install -r viixoo_app_engine/viixoo_core/requirements-dev.txt
+          pip install -r viixoo_app_engine/viixoo_backend_apps/mrp/requirements.txt
 
       - name: Test with pytest
         run: |
